@@ -29,16 +29,6 @@ class Camera:
 
         mycursor = mydb.cursor()
 
-    def handle_close(self, evt):
-        """
-        This function will close the GUI when close event happens.
-
-        :param evt: Event that occurs when the figure closes.
-        :type evt: Event
-        """
-
-        self.continue_recording = False
-
     def main(self):
         """
         Example entry point; notice the volume of data that the logging event handler
@@ -219,12 +209,6 @@ class Camera:
             # Close program
             print('Press enter to close the program..')
 
-            # Figure(1) is default so you can omit this line. Figure(0) will create a new window every time program hits this line
-            # fig = plt.figure(1)
-
-            # Close the GUI when close event happens
-            # fig.canvas.mpl_connect('close_event', handle_close)
-
             # Retrieve and display images
             while (self.continue_recording):
                 try:
@@ -258,8 +242,7 @@ class Camera:
                         self.image = np.dstack((C, B))
                         self.segments()
                         self.center_of_the_beam()
-                        print(self.XselectCoor)
-                        print(self.YselectCoor)
+
                         if keyboard.is_pressed('ENTER'):
                             # print('Program is closing...')
 
@@ -319,3 +302,5 @@ caminstance = Camera()
 caminstance.main()
 X = caminstance.XselectCoor
 Y = caminstance.YselectCoor
+print(X)
+print(Y)
