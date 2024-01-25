@@ -240,7 +240,7 @@ class Camera:
                         B = image_data
                         C = np.dstack((A, B))
                         self.image = np.dstack((C, B))
-                        self.segments()
+                        self.spixel()
                         self.center_of_the_beam()
 
                         if keyboard.is_pressed('ENTER'):
@@ -257,16 +257,16 @@ class Camera:
             print('Error: %s' % ex)
             return False
 
-    def segments(self):
+    def spixel(self):
         numSegments = 300  # Segments for superpixels
         # apply SLIC and extract the segments
         self.segments = slic(self.image, n_segments=numSegments, sigma=5)
         # show the output of SLIC
-        # fig = plt.figure("Superpixels -- %d segments" % (numSegments))
-        # ax = fig.add_subplot(1, 1, 1)
-        # ax.imshow(mark_boundaries(image, segments))
-        # plt.axis("off")
-        # plt.show()
+        fig = plt.figure("Superpixels -- %d segments" % (numSegments))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.imshow(mark_boundaries(self.image, self.segments))
+        plt.axis("off")
+        plt.show()
 
     def center_of_the_beam(self):
         # Center of the beam code
