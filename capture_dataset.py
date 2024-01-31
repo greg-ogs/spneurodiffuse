@@ -10,6 +10,7 @@ import numpy as np
 import mysql.connector
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
+import PIL
 # from skimage.util import img_as_float
 # from skimage import io
 # from sklearn.preprocessing import StandardScaler
@@ -212,6 +213,7 @@ class Camera:
 
             # Retrieve and display images
             while (self.continue_recording):
+                n_image = 0
                 try:
 
                     #  Retrieve next received image
@@ -241,6 +243,9 @@ class Camera:
                         B = image_data
                         C = np.dstack((A, B))
                         self.image = np.dstack((C, B))
+                        name = "IMG_" + n_image + ".jpg"
+                        self.image.save(name)
+                        n_image += 1
                         # self.spixel()
                         # self.center_of_the_beam()
 
