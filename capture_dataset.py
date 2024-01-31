@@ -17,7 +17,7 @@ import PIL
 # import tensorflow as tf
 
 
-class Camera:
+class CameraDataSet:
     def __init__(self):
         self.segments = None
         self.image = None
@@ -76,7 +76,7 @@ class Camera:
             # time.sleep(2)
             result = self.run_single_camera(cam)
             result &= result
-            print('Camera %d example complete... \n' % i)
+            print('CameraDataSet %d example complete... \n' % i)
 
         # Release reference to camera
         # NOTE: Unlike the C++ examples, we cannot rely on pointer objects being automatically
@@ -95,7 +95,7 @@ class Camera:
         This function acts as the body of the example; please see NodeMapInfo example
         for more in-depth comments on setting up cameras.
 
-        :param cam: Camera to run on.
+        :param cam: CameraDataSet to run on.
         :type cam: CameraPtr
         :return: True if successful, False otherwise.
         :rtype: bool
@@ -128,7 +128,7 @@ class Camera:
         """
         This function continuously acquires images from a device and display them in a GUI.
 
-        :param cam: Camera to acquire images from.
+        :param cam: CameraDataSet to acquire images from.
         :param nodemap: Device nodemap.
         :param nodemap_tldevice: Transport layer device nodemap.
         :type cam: CameraPtr
@@ -263,7 +263,7 @@ class Camera:
             print('Error: %s' % ex)
             return False
 
-    def spixel(self):
+    def pixel(self):
         num_segments = 300  # Segments for superpixels
         # apply SLIC and extract the segments
         self.segments = slic(self.image, n_segments=num_segments, sigma=5)
@@ -304,7 +304,7 @@ class Camera:
         self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
 
-caminstance = Camera()
+caminstance = CameraDataSet()
 caminstance.main()
 X = caminstance.XselectCoor
 Y = caminstance.YselectCoor
