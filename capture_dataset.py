@@ -10,7 +10,7 @@ import numpy as np
 import mysql.connector
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
-import PIL
+from PIL import Image as im
 # from skimage.util import img_as_float
 # from skimage import io
 # from sklearn.preprocessing import StandardScaler
@@ -22,14 +22,14 @@ class CameraDataSet:
         self.segments = None
         self.image = None
         self.continue_recording = True
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="Greg",
-            password="contpass01",
-            database="AIRY"
-        )
+        # mydb = mysql.connector.connect(
+        #    host="localhost",
+        #    user="Greg",
+        #    password="contpass01",
+        #    database="AIRY"
+        #)
 
-        mycursor = mydb.cursor()
+        #mycursor = mydb.cursor()
 
     def main(self):
         """
@@ -210,10 +210,9 @@ class CameraDataSet:
 
             # Close program
             print('Press enter to close the program..')
-
+            n_image = 0
             # Retrieve and display images
             while (self.continue_recording):
-                n_image = 0
                 try:
 
                     #  Retrieve next received image
@@ -243,9 +242,14 @@ class CameraDataSet:
                         B = image_data
                         C = np.dstack((A, B))
                         self.image = np.dstack((C, B))
-                        name = "IMG_" + n_image + ".jpg"
-                        self.image.save(name)
+                        data = im.fromarray(self.image)
+                        name = "IMG_" + str(n_image) + ".jpg"
+                        data.save(name)
                         n_image += 1
+                        if n_image == 550:
+                            self.continue_recording = False
+                            print("End---")
+                            print(n_image)
                         # self.spixel()
                         # self.center_of_the_beam()
 
@@ -259,6 +263,7 @@ class CameraDataSet:
                 except PySpin.SpinnakerException as ex:
                     print('Error: %s' % ex)
                     return False
+            return False
         except PySpin.SpinnakerException as ex:
             print('Error: %s' % ex)
             return False
@@ -306,7 +311,7 @@ class CameraDataSet:
 
 caminstance = CameraDataSet()
 caminstance.main()
-X = caminstance.XselectCoor
-Y = caminstance.YselectCoor
-print(X)
-print(Y)
+# X = caminstance.XselectCoor
+# Y = caminstance.YselectCoor
+# print(X)
+# print(Y)
