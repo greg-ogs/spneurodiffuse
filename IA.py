@@ -111,7 +111,7 @@ class BackPropagation():
 
     def predict(self):
         img = tf.keras.utils.load_img(
-            "E:\spneurodiffuse\dataset\downleft\IMG_0.jpg", target_size=(self.img_height, self.img_width)
+            "E:/spneurodiffuse/Test/IMG_2.jpeg", target_size=(self.img_height, self.img_width)
         )
         img_array = tf.keras.utils.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
@@ -127,4 +127,5 @@ class BackPropagation():
 
 if __name__ == "__main__":
     mod = BackPropagation()
-    mod.train_model()
+    mod.predict()
+    # mod.train_model()
