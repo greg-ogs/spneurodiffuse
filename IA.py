@@ -127,5 +127,5 @@ class BackPropagation():
 
 if __name__ == "__main__":
     mod = BackPropagation()
-    mod.predict()
-    # mod.train_model()
+    # mod.predict()
+    mod.train_model()

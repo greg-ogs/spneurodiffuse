@@ -210,7 +210,7 @@ class CameraDataSet:
 
             # Close program
             print('Press enter to close the program..')
-            n_image = 550
+            n_image = 1100
             # Retrieve and display images
             while (self.continue_recording):
                 try:
@@ -246,7 +246,7 @@ class CameraDataSet:
                         name = "IMG_" + str(n_image) + ".jpg"
                         data.save(name)
                         n_image += 1
-                        if n_image == 1100:
+                        if n_image == 1650:
                             self.continue_recording = False
                             print("End---")
                             print(n_image)
