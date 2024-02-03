@@ -129,7 +129,7 @@ class BackPropagation:
 if __name__ == "__main__":
     mod = BackPropagation()
     image_data = tf.keras.utils.load_img(
-        "E:\spneurodiffuse\Test\IMG_4.jpg", target_size=(mod.img_height, mod.img_width)
+        "E:\spneurodiffuse\Test\IMG_0.jpg", target_size=(mod.img_height, mod.img_width)
     )
     for i in range(3):
         mod.predict(image_data)
