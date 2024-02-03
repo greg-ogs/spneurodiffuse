@@ -18,14 +18,14 @@ class BackPropagation:
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
-        data_dir = "E:\spneurodiffuse\dataset"
+        self.data_dir = "E:\spneurodiffuse\dataset"
 
         # image_count = len(list(data_dir.glob('*/*.jpg')))
         # print(image_count)
 
     def train_model(self):
         self.train_ds = tf.keras.utils.image_dataset_from_directory(
-            data_dir,
+            self.data_dir,
             validation_split=0.2,
             subset="training",
             seed=123,
