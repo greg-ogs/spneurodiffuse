@@ -127,6 +127,7 @@ class BackPropagation:
             "This image most likely belongs to {} with a {:.2f} percent confidence."
             .format(self.class_names[np.argmax(score)], 100 * np.max(score))
         )
+        return self.class_names[np.argmax(score)]
 
 
 if __name__ == "__main__":

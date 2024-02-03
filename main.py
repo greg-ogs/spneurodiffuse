@@ -2,21 +2,21 @@
 Created on Tuesday, January 22 of 2024 by Greg
 """
 import os
-# import PySpin
-import matplotlib.pyplot as plt
+import PySpin
+# import matplotlib.pyplot as plt
+# import time
+# from skimage.segmentation import slic
+# from skimage.segmentation import mark_boundaries
+# from skimage.util import img_as_float
+# from skimage import io
+# from sklearn.preprocessing import StandardScaler
+# import tensorflow as tf
 import keyboard
-import time
+from PIL import Image as im
 import numpy as np
 import mysql.connector
-from skimage.segmentation import slic
-from skimage.segmentation import mark_boundaries
-from skimage.util import img_as_float
-from skimage import io
-from sklearn.preprocessing import StandardScaler
-import tensorflow as tf
 
 from IA import BackPropagation
-
 
 class Camera:
     def __init__(self):
@@ -210,7 +210,7 @@ class Camera:
 
             # Close program
             print('Press enter to close the program..')
-
+            bp = BackPropagation()
             # Retrieve and display images
             while (self.continue_recording):
                 try:
@@ -241,9 +241,10 @@ class Camera:
                         B = image_data
                         C = np.dstack((A, B))
                         self.image = np.dstack((C, B))
+                        data = im.fromarray(self.image)
                         # self.spixel()
                         # self.center_of_the_beam()
-                        # bp =
+                        winner_class = bp.predict()
 
                         if keyboard.is_pressed('ENTER'):
                             # print('Program is closing...')
@@ -301,8 +302,6 @@ class Camera:
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
 
-# caminstance = Camera()
-# caminstance.capture()
-bp = BackPropagation()
-bp.predict()
+caminstance = Camera()
+caminstance.capture()
 
