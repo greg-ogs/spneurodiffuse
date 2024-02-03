@@ -2,19 +2,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PIL
 import tensorflow as tf
-
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
-
-import pathlib
+import time
 
 
 class BackPropagation:
     def __init__(self):
         self.val_ds = None
         self.train_ds = None
-        self.class_names = ['upr', 'upl', 'dwe', 'dwl', 'c']
+        self.class_names = ['c', 'dwl', 'dwr', 'upl', 'upr']
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
@@ -111,8 +109,9 @@ class BackPropagation:
         self.predict()
 
     def predict(self):
+        start_tieme = time.time()
         img = tf.keras.utils.load_img(
-            "E:/spneurodiffuse/Test/IMG_2.jpeg", target_size=(self.img_height, self.img_width)
+            "E:\spneurodiffuse\Test\IMG_4.jpg", target_size=(self.img_height, self.img_width)
         )
         img_array = tf.keras.utils.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
@@ -127,10 +126,15 @@ class BackPropagation:
             "This image most likely belongs to {} with a {:.2f} percent confidence."
             .format(self.class_names[np.argmax(score)], 100 * np.max(score))
         )
+        end_time = time.time()
+        elapsed_time = end_time - start_tieme
+        time.sleep(5-elapsed_time)
         return self.class_names[np.argmax(score)]
 
 
 if __name__ == "__main__":
     mod = BackPropagation()
     # mod.predict()
-    mod.train_model()
+    for i in range(3):
+        mod.predict()
+        print(str(i) + "-")
