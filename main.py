@@ -2,7 +2,7 @@
 Created on Tuesday, January 22 of 2024 by Greg
 """
 import os
-import PySpin
+# import PySpin
 import matplotlib.pyplot as plt
 import keyboard
 import time
@@ -15,7 +15,7 @@ from skimage import io
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 
-from IA import BackPropagation as BP
+from IA import BackPropagation
 
 
 class Camera:
@@ -233,7 +233,6 @@ class Camera:
                         print('Image incomplete with image status %d ...' % image_result.GetImageStatus())
 
                     else:
-                        # Non FLIR code
                         # Getting the image data as a numpy array
                         image_data = image_result.GetNDArray()
                         image_data = np.uint8(image_data)
@@ -242,8 +241,9 @@ class Camera:
                         B = image_data
                         C = np.dstack((A, B))
                         self.image = np.dstack((C, B))
-                        self.spixel()
-                        self.center_of_the_beam()
+                        # self.spixel()
+                        # self.center_of_the_beam()
+                        # bp =
 
                         if keyboard.is_pressed('ENTER'):
                             # print('Program is closing...')
@@ -301,5 +301,8 @@ class Camera:
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
 
-caminstance = Camera()
-caminstance.capture()
+# caminstance = Camera()
+# caminstance.capture()
+bp = BackPropagation()
+bp.predict()
+

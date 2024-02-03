@@ -12,7 +12,9 @@ import pathlib
 
 class BackPropagation:
     def __init__(self):
-        self.class_names = None
+        self.val_ds = None
+        self.train_ds = None
+        self.class_names = ['upr', 'upl', 'dwe', 'dwl', 'c']
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
@@ -21,6 +23,7 @@ class BackPropagation:
         # image_count = len(list(data_dir.glob('*/*.jpg')))
         # print(image_count)
 
+    def train_model(self):
         self.train_ds = tf.keras.utils.image_dataset_from_directory(
             data_dir,
             validation_split=0.2,
@@ -38,8 +41,6 @@ class BackPropagation:
             batch_size=self.batch_size)
 
         self.class_names = self.train_ds.class_names
-
-    def train_model(self):
         AUTOTUNE = tf.data.AUTOTUNE
 
         train_ds = self.train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
@@ -118,6 +119,9 @@ class BackPropagation:
         model = tf.keras.models.load_model('my_model.keras')
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
+
+        # Change class_names for a static array
+        # Identify class index in this array
 
         print(
             "This image most likely belongs to {} with a {:.2f} percent confidence."
