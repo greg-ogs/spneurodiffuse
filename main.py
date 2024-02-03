@@ -244,7 +244,7 @@ class Camera:
                         data = im.fromarray(self.image)
                         # self.spixel()
                         # self.center_of_the_beam()
-                        winner_class = bp.predict()
+                        winner_class = bp.predict(data)
 
                         if keyboard.is_pressed('ENTER'):
                             # print('Program is closing...')

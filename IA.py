@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import PIL
 import tensorflow as tf
-from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 import time
@@ -31,7 +29,7 @@ class BackPropagation:
             batch_size=self.batch_size)
 
         self.val_ds = tf.keras.utils.image_dataset_from_directory(
-            data_dir,
+            self.data_dir,
             validation_split=0.2,
             subset="validation",
             seed=123,
@@ -108,11 +106,12 @@ class BackPropagation:
 
         self.predict()
 
-    def predict(self):
+    def predict(self, data):
         start_tieme = time.time()
-        img = tf.keras.utils.load_img(
-            "E:\spneurodiffuse\Test\IMG_4.jpg", target_size=(self.img_height, self.img_width)
-        )
+        img = data
+        # img = tf.keras.utils.load_img(
+        #     "E:\spneurodiffuse\Test\IMG_4.jpg", target_size=(self.img_height, self.img_width)
+        # )
         img_array = tf.keras.utils.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
         model = tf.keras.models.load_model('my_model.keras')
