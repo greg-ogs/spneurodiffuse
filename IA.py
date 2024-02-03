@@ -10,7 +10,7 @@ from tensorflow.keras.models import Sequential
 import pathlib
 
 
-class BackPropagation():
+class BackPropagation:
     def __init__(self):
         self.class_names = None
         self.batch_size = 32
