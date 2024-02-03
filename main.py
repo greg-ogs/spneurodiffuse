@@ -212,7 +212,7 @@ class Camera:
             print('Press enter to close the program..')
             bp = BackPropagation()
             # Retrieve and display images
-            while (self.continue_recording):
+            while self.continue_recording:
                 try:
 
                     #  Retrieve next received image

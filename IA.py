@@ -122,7 +122,7 @@ class BackPropagation:
         )
         end_time = time.time()
         elapsed_time = end_time - start_tieme
-        time.sleep(5 - elapsed_time)
+        time.sleep(4 - elapsed_time)
         return self.class_names[np.argmax(score)]
 
 
