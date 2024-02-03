@@ -104,14 +104,9 @@ class BackPropagation:
 
         input("Enter to continue")
 
-        self.predict()
-
     def predict(self, data):
         start_tieme = time.time()
         img = data
-        # img = tf.keras.utils.load_img(
-        #     "E:\spneurodiffuse\Test\IMG_4.jpg", target_size=(self.img_height, self.img_width)
-        # )
         img_array = tf.keras.utils.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
         model = tf.keras.models.load_model('my_model.keras')
@@ -127,13 +122,15 @@ class BackPropagation:
         )
         end_time = time.time()
         elapsed_time = end_time - start_tieme
-        time.sleep(5-elapsed_time)
+        time.sleep(5 - elapsed_time)
         return self.class_names[np.argmax(score)]
 
 
 if __name__ == "__main__":
     mod = BackPropagation()
-    # mod.predict()
+    image_data = tf.keras.utils.load_img(
+        "E:\spneurodiffuse\Test\IMG_4.jpg", target_size=(mod.img_height, mod.img_width)
+    )
     for i in range(3):
-        mod.predict()
+        mod.predict(image_data)
         print(str(i) + "-")
