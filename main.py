@@ -17,18 +17,12 @@ import mysql.connector
 
 from IA import BackPropagation
 
+
 class Camera:
     def __init__(self):
         self.image = None
         self.continue_recording = True
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="Greg",
-            password="contpass01",
-            database="AIRY"
-        )
 
-        mycursor = mydb.cursor()
 
     def capture(self):
         """
@@ -300,7 +294,21 @@ class Camera:
     #     self.XselectCoor = maxVC[1][arsz]  # coordenada intermedia del segmento con mas intencidad en x
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
+class sqlQuerty:
+    def __init__(self):
+        mydb = mysql.connector.connect(
+            host="localhost",
+            user="Greg",
+            password="contpass01",
+            database="AIRY"
+        )
+
+        mycursor = mydb.cursor()
+
+    def query(self):
+        query = "SELECT * FROM AIRY WHERE ID = %s"
+        values = 1
+
 
 caminstance = Camera()
 caminstance.capture()
-
