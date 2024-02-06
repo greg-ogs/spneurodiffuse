@@ -23,7 +23,6 @@ class Camera:
         self.image = None
         self.continue_recording = True
 
-
     def capture(self):
         """
         Example entry point; notice the volume of data that the logging event handler
@@ -204,6 +203,7 @@ class Camera:
             # Close program
             print('Press enter to close the program..')
             bp = BackPropagation()
+            qry = sql_query()
             # Retrieve and display images
             while self.continue_recording:
                 try:
@@ -238,7 +238,23 @@ class Camera:
                         # self.spixel()
                         # self.center_of_the_beam()
                         winner_class = bp.predict(data)
-
+                        if winner_class == 'c':
+                            X = 0
+                            Y = 0
+                        if winner_class == 'dwl':
+                            X = 0
+                            Y = 0
+                        if winner_class == 'dwr':
+                            X = 0
+                            Y = 0
+                        if winner_class == 'upl':
+                            X = 0
+                            Y = 0
+                        if winner_class == 'upr':
+                            X = 0
+                            Y = 0
+                        qry.qy(X, Y)
+                        qry.next_step()
                         if keyboard.is_pressed('ENTER'):
                             # print('Program is closing...')
 
@@ -294,21 +310,31 @@ class Camera:
     #     self.XselectCoor = maxVC[1][arsz]  # coordenada intermedia del segmento con mas intencidad en x
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
-class sqlQuerty:
+
+class sql_query:
     def __init__(self):
-        mydb = mysql.connector.connect(
+        self.mydb = mysql.connector.connect(
             host="localhost",
             user="Greg",
             password="contpass01",
             database="AIRY"
         )
 
-        mycursor = mydb.cursor()
+        self.mycursor = self.mydb.cursor()
 
-    def query(self):
-        query = "SELECT * FROM AIRY WHERE ID = %s"
-        values = 1
+    def qy(self, X, Y):
+        sql = "UPDATE AIRY SET X = %s, Y = %s, SIGNAL = %s WHERE ID = %s"
+        val = (X, Y, 1, 1)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
 
+    def next_step(self):
+        self.mycursor.execute("SELECT SIGNAL FROM AIRY WHERE ID = 1")
+        myresult = self.mycursor.fetchall()
+        while myresult == 1:
+            self.mycursor.execute("SELECT SIGNAL FROM AIRY WHERE ID = 1")
+            myresult = self.mycursor.fetchall()
 
-caminstance = Camera()
-caminstance.capture()
+def main_function():
+    caminstance = Camera()
+    caminstance.capture()
