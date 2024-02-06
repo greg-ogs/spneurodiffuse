@@ -335,6 +335,7 @@ class sql_query:
             self.mycursor.execute("SELECT SIGNAL FROM AIRY WHERE ID = 1")
             myresult = self.mycursor.fetchall()
 
+
 def main_function():
     caminstance = Camera()
     caminstance.capture()
