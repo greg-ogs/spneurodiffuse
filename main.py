@@ -323,19 +323,21 @@ class sql_query:
         self.mycursor = self.mydb.cursor()
 
     def qy(self, X, Y):
-        sql = "UPDATE AIRY SET X = %s, Y = %s, SIGNAL = %s WHERE ID = %s"
+        sql = "UPDATE AIRY SET X = %s, Y = %s, SIGNALS = %s WHERE ID = %s"
         val = (X, Y, 1, 1)
         self.mycursor.execute(sql, val)
         self.mydb.commit()
 
     def next_step(self):
-        self.mycursor.execute("SELECT SIGNAL FROM AIRY WHERE ID = 1")
+        self.mycursor.execute("SELECT SIGNALS FROM AIRY WHERE ID = 1")
         myresult = self.mycursor.fetchall()
         while myresult == 1:
-            self.mycursor.execute("SELECT SIGNAL FROM AIRY WHERE ID = 1")
+            self.mycursor.execute("SELECT SIGNALS FROM AIRY WHERE ID = 1")
             myresult = self.mycursor.fetchall()
 
 
 def main_function():
     caminstance = Camera()
     caminstance.capture()
+
+main_function()
