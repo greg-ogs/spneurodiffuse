@@ -106,7 +106,7 @@ class Camera:
             # Acquire images
             # result =bool , image_data
             result = self.acquire_images(cam, nodemap, nodemap_tldevice)
-            result &= result
+            # result &= result
             # Deinitialize camera
             cam.DeInit()
 
@@ -233,10 +233,10 @@ class Camera:
                         A = image_data
                         B = image_data
                         C = np.dstack((A, B))
-                        self.image = np.dstack((C, B))
-                        data = im.fromarray(self.image)
-                        # self.spixel()
-                        # self.center_of_the_beam()
+                        image = np.dstack((C, B))
+                        data = im.fromarray(image)
+                        self.spixel()
+                        self.center_of_the_beam()
                         winner_class = bp.predict(data)
                         if winner_class == 'c':
                             X = 0
