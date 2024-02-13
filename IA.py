@@ -106,11 +106,11 @@ class BackPropagation:
 
         input("Enter to continue")
 
-    def predict(self, img_dir):
+    def predict(self, img_data):
         start_tieme = time.time()
-        img = keras.preprocessing.image.load_img(
-            img_dir, target_size=self.image_size)
-        img_array = tf.keras.utils.img_to_array(img)
+        # img = keras.preprocessing.image.load_img(
+        #     img_dir, target_size=self.image_size)
+        img_array = tf.keras.utils.img_to_array(img_data)
         img_array = tf.expand_dims(img_array, 0)
         model = tf.keras.models.load_model('my_model.h5')
         predictions = model.predict(img_array)

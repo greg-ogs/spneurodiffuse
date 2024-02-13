@@ -13,8 +13,9 @@ Created on Tuesday, January 22 of 2024 by Greg
 import keyboard
 import numpy as np
 import PySpin
+from PIL import Image
 from PIL import Image as im
-
+import mysql.connector
 from IA import BackPropagation
 
 
@@ -236,22 +237,23 @@ class Camera:
                         C = np.dstack((A, B))
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
+                        data = data.resize((180,180))
                         winner_class = bp.predict(data)
                         if winner_class == 'c':
                             X = 1
-                            Y = 1
+                            Y = 2
                         if winner_class == 'dwl':
-                            X = 1
-                            Y = 1
+                            X = 3
+                            Y = 4
                         if winner_class == 'dwr':
-                            X = 1
-                            Y = 1
+                            X = 5
+                            Y = 6
                         if winner_class == 'upl':
-                            X = 1
-                            Y = 1
+                            X = 7
+                            Y = 8
                         if winner_class == 'upr':
-                            X = 1
-                            Y = 1
+                            X = 9
+                            Y = 10
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
@@ -308,6 +310,32 @@ class Camera:
     #     arsz = int(arraysz[0] / 2)  # Punto medio del conjunto de coordenadas del segmento
     #     self.XselectCoor = maxVC[1][arsz]  # coordenada intermedia del segmento con mas intencidad en x
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
+
+class sql_query:
+    def __init__(self):
+        self.mydb = mysql.connector.connect(
+            host="localhost",
+            user="greg",
+            password="contpass01",
+            database="airy"
+        )
+
+        self.mycursor = self.mydb.cursor()
+
+    def qy(self, X, Y):
+        # def for py
+        sql = "UPDATE DATA SET X = %s, Y = %s, SIGNALS = %s WHERE ID = %s"
+        val = (X, Y, 1, 1)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
+
+    def next_step(self):
+        # def for py
+        self.mycursor.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
+        myresult = self.mycursor.fetchall()
+        while myresult == 1:
+            self.mycursor.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
+            myresult = self.mycursor.fetchall()
 
 if __name__ == "__main__":
     caminstance = Camera()
