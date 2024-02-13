@@ -309,9 +309,6 @@ class Camera:
     #     self.XselectCoor = maxVC[1][arsz]  # coordenada intermedia del segmento con mas intencidad en x
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
-
-
-
 if __name__ == "__main__":
     caminstance = Camera()
     caminstance.capture()
