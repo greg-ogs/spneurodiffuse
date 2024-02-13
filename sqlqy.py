@@ -1,29 +1,15 @@
 import mysql.connector
-class sql_query:
+class sql_queryl:
     def __init__(self):
         self.mydb = mysql.connector.connect(
             host="localhost",
-            user="Greg",
+            user="greg",
             password="contpass01",
-            database="AIRY"
+            database="airy"
         )
 
         self.mycursor = self.mydb.cursor()
 
-    def qy(self, X, Y):
-        # def for py
-        sql = "UPDATE AIRY SET X = %s, Y = %s, SIGNALS = %s WHERE ID = %s"
-        val = (X, Y, 1, 1)
-        self.mycursor.execute(sql, val)
-        self.mydb.commit()
-
-    def next_step(self):
-        # def for py
-        self.mycursor.execute("SELECT SIGNALS FROM AIRY WHERE ID = 1")
-        myresult = self.mycursor.fetchall()
-        while myresult == 1:
-            self.mycursor.execute("SELECT SIGNALS FROM AIRY WHERE ID = 1")
-            myresult = self.mycursor.fetchall()
 
     def coord(self):
         # def for lv
@@ -46,10 +32,13 @@ class sql_query:
 
 
 def get_coord():
-    lqy = sql_query()
-    lqy.coord()
+    lqy = sql_queryl()
+    m = lqy.coord()
+    return m
 
 
 def get_signal_0():
-    lqy = sql_query()
+    lqy = sql_queryl()
     lqy.signal_0()
+
+get_coord()
