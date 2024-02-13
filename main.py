@@ -1,7 +1,7 @@
 """
 Created on Tuesday, January 22 of 2024 by Greg
 """
-import PySpin
+
 # import matplotlib.pyplot as plt
 # import time
 # from skimage.segmentation import slic
@@ -11,15 +11,15 @@ import PySpin
 # from sklearn.preprocessing import StandardScaler
 # import tensorflow as tf
 import keyboard
-from PIL import Image as im
 import numpy as np
-import mysql.connector
 
 from IA import BackPropagation
 
 
 class Camera:
     def __init__(self):
+        import PySpin
+        from PIL import Image as im
         self.image = None
         self.continue_recording = True
 
@@ -311,6 +311,7 @@ class Camera:
 
 class sql_query:
     def __init__(self):
+        import mysql.connector
         self.mydb = mysql.connector.connect(
             host="localhost",
             user="Greg",
