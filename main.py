@@ -240,8 +240,8 @@ class Camera:
                         data = data.resize((180,180))
                         winner_class = bp.predict(data)
                         if winner_class == 'c':
-                            X = 1
-                            Y = 2
+                            X = 0
+                            Y = 0
                         if winner_class == 'dwl':
                             X = 3
                             Y = 4
@@ -252,6 +252,9 @@ class Camera:
                             X = 7
                             Y = 8
                         if winner_class == 'upr':
+                            X = 9
+                            Y = 10
+                        if winner_class == 'upr0':
                             X = 9
                             Y = 10
                         qry.qy(X, Y)
@@ -333,9 +336,13 @@ class sql_query:
         # def for py
         self.mycursor.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
         myresult = self.mycursor.fetchall()
+        myresult = myresult[0]
+        myresult = myresult[0]
         while myresult == 1:
             self.mycursor.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
             myresult = self.mycursor.fetchall()
+            myresult = myresult[0]
+            myresult = myresult[0]
 
 if __name__ == "__main__":
     caminstance = Camera()

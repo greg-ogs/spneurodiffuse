@@ -27,8 +27,10 @@ class sql_queryl:
         # def for lv
         # call before update increments in lv
         # set a timer after lv execute this (4s aprox)
-        sql = "UPDATE AIRY SET SIGNALS = %s WHERE ID = %s"
+        sql = "UPDATE DATA SET SIGNALS = %s WHERE ID = %s"
         val = (0, 1)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
 
 
 def get_coord():
@@ -41,4 +43,4 @@ def get_signal_0():
     lqy = sql_queryl()
     lqy.signal_0()
 
-get_coord()
+get_signal_0()
