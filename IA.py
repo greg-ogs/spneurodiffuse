@@ -4,16 +4,18 @@ import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 import time
+from tensorflow import keras
 
 
 class BackPropagation:
     def __init__(self):
         self.val_ds = None
         self.train_ds = None
-        self.class_names = ['c', 'dwl', 'dwr', 'upl', 'upr']
+        self.class_names = ['c', 'dwl', 'dwr', 'upl', 'upr', 'dwl', 'dwr', 'upl', 'upr']
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
+        self.image_size = (self.img_height, self.img_width)
         self.data_dir = "E:\spneurodiffuse\dataset"
 
         # image_count = len(list(data_dir.glob('*/*.jpg')))
@@ -104,12 +106,13 @@ class BackPropagation:
 
         input("Enter to continue")
 
-    def predict(self, data):
+    def predict(self, img_dir):
         start_tieme = time.time()
-        img = data
+        img = keras.preprocessing.image.load_img(
+            img_dir, target_size=self.image_size)
         img_array = tf.keras.utils.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
-        model = tf.keras.models.load_model('my_model.keras')
+        model = tf.keras.models.load_model('my_model.h5')
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
 
@@ -128,9 +131,6 @@ class BackPropagation:
 
 if __name__ == "__main__":
     mod = BackPropagation()
-    image_data = tf.keras.utils.load_img(
-        "E:\spneurodiffuse\Test\IMG_0.jpg", target_size=(mod.img_height, mod.img_width)
-    )
     for i in range(3):
-        mod.predict(image_data)
+        mod.predict("C:/Users/grego/Downloads/Drives/Figure 2022-07-18 134302 (1).jpeg")
         print(str(i) + "-")

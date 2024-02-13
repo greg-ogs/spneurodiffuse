@@ -237,20 +237,20 @@ class Camera:
                         data = im.fromarray(image)
                         winner_class = bp.predict(data)
                         if winner_class == 'c':
-                            X = 0
-                            Y = 0
+                            X = 1
+                            Y = 1
                         if winner_class == 'dwl':
-                            X = 0
-                            Y = 0
+                            X = 1
+                            Y = 1
                         if winner_class == 'dwr':
-                            X = 0
-                            Y = 0
+                            X = 1
+                            Y = 1
                         if winner_class == 'upl':
-                            X = 0
-                            Y = 0
+                            X = 1
+                            Y = 1
                         if winner_class == 'upr':
-                            X = 0
-                            Y = 0
+                            X = 1
+                            Y = 1
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
