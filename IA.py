@@ -103,8 +103,10 @@ class BackPropagation:
         plt.title('Training and Validation Loss')
         plt.show()
 
-        model.save('my_model.h5')
-
+        model.save('model.keras')
+        print("keras done")
+        model.save('model.h5')
+        print("h5 done")
         input("Enter to continue")
 
     def predict(self, img_data):
