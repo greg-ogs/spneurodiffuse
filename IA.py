@@ -12,12 +12,12 @@ class BackPropagation:
         self.val_ds = None
         self.train_ds = None
         self.class_names = ['c', 'dwl', 'upr', 'upl', 'dwr']
-                            # 0    0      0       0      0
+        # 0    0      0       0      0
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
         self.image_size = (self.img_height, self.img_width)
-        self.data_dir = "E:\spneurodiffuse\dataset"
+        self.data_dir = "C:/Users/grego/Downloads/dataset"
 
         # image_count = len(list(data_dir.glob('*/*.jpg')))
         # print(image_count)
@@ -74,7 +74,7 @@ class BackPropagation:
 
         model.summary()
 
-        epochs = 5
+        epochs = 10
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
@@ -103,7 +103,7 @@ class BackPropagation:
         plt.title('Training and Validation Loss')
         plt.show()
 
-        model.save('my_model.keras')
+        model.save('my_model.h5')
 
         input("Enter to continue")
 
@@ -113,7 +113,7 @@ class BackPropagation:
         #     img_dir, target_size=self.image_size)
         img_array = tf.keras.utils.img_to_array(img_data)
         img_array = tf.expand_dims(img_array, 0)
-        model = tf.keras.models.load_model("C:/Users/grego/Downloads/my_model.h5")
+        model = tf.keras.models.load_model("my_model.h5")
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
 
@@ -132,6 +132,6 @@ class BackPropagation:
 
 if __name__ == "__main__":
     mod = BackPropagation()
-    for i in range(3):
-        mod.predict("C:/Users/grego/Downloads/Drives/Figure 2022-07-18 134302 (1).jpeg")
-        print(str(i) + "-")
+    # for i in range(3):
+        # mod.predict("C:/Users/grego/Downloads/Drives/Figure 2022-07-18 134302 (1).jpeg")
+    mod.train_model()
