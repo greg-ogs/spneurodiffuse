@@ -11,8 +11,8 @@ class BackPropagation:
     def __init__(self):
         self.val_ds = None
         self.train_ds = None
-        self.class_names = ['c', 'dwl', 'upr', 'upl', 'dwr']
-        # 0    0      0       0      0
+        self.class_names = ['c', 'dwl', 'dwr', 'upl', 'upr']
+                            # 1    1      1       1     1
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
@@ -115,7 +115,7 @@ class BackPropagation:
         #     img_dir, target_size=self.image_size)
         img_array = tf.keras.utils.img_to_array(img_data)
         img_array = tf.expand_dims(img_array, 0)
-        model = tf.keras.models.load_model("my_model.h5")
+        model = tf.keras.models.load_model("model.h5")
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
 
