@@ -20,7 +20,12 @@ class sql_queryl:
         x = list_one[1]
         y = list_one[2]
         signal = list_one[3]
-        m = [x, y, signal]
+        stop = list_one[4]
+        m = [x, y, signal, stop]
+        sql = "UPDATE DATA SET X = %s, Y = %s WHERE ID = %s"
+        val = (0, 0, 1)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
         return m
 
     def signal_0(self):

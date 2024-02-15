@@ -2,8 +2,9 @@
 """
 Created on Tuesday, January 22 of 2024 by Greg
 """
+import time
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # import time
 # from skimage.segmentation import slic
 # from skimage.segmentation import mark_boundaries
@@ -239,25 +240,28 @@ class Camera:
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
                         data = data.resize((180,180))
+                        plt.imshow(data)
+                        plt.show()
                         winner_class = bp.predict(data)
+                        print(winner_class)
                         if winner_class == 'c':
                             X = 0
                             Y = 0
+                            qry.lab_stop()
+                            self.continue_recording = False
                         if winner_class == 'dwl':
-                            X = 3
-                            Y = 4
+                            X = -0.003
+                            Y = 0.001
                         if winner_class == 'dwr':
-                            X = 5
-                            Y = 6
+                            X = 0.003
+                            Y = 0.001
                         if winner_class == 'upl':
-                            X = 7
-                            Y = 8
+                            X = -0.003
+                            Y = -0.001
                         if winner_class == 'upr':
-                            X = 9
-                            Y = 10
-                        if winner_class == 'upr0':
-                            X = 9
-                            Y = 10
+                            X = 0.003
+                            Y = -0.001
+                        print(X)
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
@@ -326,6 +330,11 @@ class sql_query:
 
         self.mycursor = self.mydb.cursor()
 
+    def lab_stop(self):
+        sql = "UPDATE DATA SET STOP = %s WHERE ID = %s"
+        val = (1, 1)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
     def qy(self, X, Y):
         # def for py
         sql = "UPDATE DATA SET X = %s, Y = %s, SIGNALS = %s WHERE ID = %s"
@@ -334,16 +343,29 @@ class sql_query:
         self.mydb.commit()
 
     def next_step(self):
+
         # def for py
-        self.mycursor.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
-        myresult = self.mycursor.fetchall()
-        myresult = myresult[0]
-        myresult = myresult[0]
-        while myresult == 1:
-            self.mycursor.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
-            myresult = self.mycursor.fetchall()
+        while True:
+            mydb0 = mysql.connector.connect(
+                host="localhost",
+                user="greg",
+                password="contpass01",
+                database="airy"
+            )
+
+            mycursor0 = mydb0.cursor()
+            mycursor0.execute("SELECT SIGNALS FROM DATA WHERE ID = 1")
+            myresult = mycursor0.fetchall()
             myresult = myresult[0]
             myresult = myresult[0]
+            mycursor0.close()
+            mydb0.close()
+            time.sleep(1)
+            if myresult == 0:
+                break
+
+
+
 
 if __name__ == "__main__":
     caminstance = Camera()
