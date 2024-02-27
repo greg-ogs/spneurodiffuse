@@ -11,13 +11,15 @@ class BackPropagation:
     def __init__(self):
         self.val_ds = None
         self.train_ds = None
-        self.class_names = ['c', 'dwl', 'dwr', 'upl', 'upr']
-                            # 1    1      1       1     1
+        self.class_names = ['BDWL-2-2', 'BDWL-2-3', 'BDWL-3-2', 'BDWL-3-3', 'BDWLS', 'BDWR-2-2', 'BDWR-2-3',
+                            'BDWR-3-2', 'BDWR-3-3', 'BDWRS', 'BUPL-2-2', 'BUPL-2-3', 'BUPL-3-2', 'BUPL-3-3', 'BUPLS',
+                            'BUPR-2-2', 'BUPR-2-3', 'BUPR-3-2', 'BUPR-3-3', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP']
+
         self.batch_size = 32
         self.img_height = 180
         self.img_width = 180
         self.image_size = (self.img_height, self.img_width)
-        self.data_dir = "C:/Users/grego/Downloads/dataset"
+        self.data_dir = "C:/Users/grego/Downloads/GitHub/DATASET"
 
         # image_count = len(list(data_dir.glob('*/*.jpg')))
         # print(image_count)
@@ -74,7 +76,7 @@ class BackPropagation:
 
         model.summary()
 
-        epochs = 10
+        epochs = 500
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
