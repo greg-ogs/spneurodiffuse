@@ -14,10 +14,11 @@ class BackPropagation:
         self.class_names = ['BDWL-2-2', 'BDWL-2-3', 'BDWL-3-2', 'BDWL-3-3', 'BDWLS', 'BDWR-2-2', 'BDWR-2-3',
                             'BDWR-3-2', 'BDWR-3-3', 'BDWRS', 'BUPL-2-2', 'BUPL-2-3', 'BUPL-3-2', 'BUPL-3-3', 'BUPLS',
                             'BUPR-2-2', 'BUPR-2-3', 'BUPR-3-2', 'BUPR-3-3', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP']
+        # Batch * 2 and image from 180 by 180 to 700 * 875
 
-        self.batch_size = 32
-        self.img_height = 180
-        self.img_width = 180
+        self.batch_size = 64
+        self.img_height = 500
+        self.img_width = 625
         self.image_size = (self.img_height, self.img_width)
         self.data_dir = "C:/Users/grego/Downloads/GitHub/DATASET"
 
@@ -56,17 +57,17 @@ class BackPropagation:
         print(np.min(first_image), np.max(first_image))
 
         num_classes = len(self.class_names)
-
+        #filters * 2 and kernel + 2
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
-            layers.Conv2D(16, 3, padding='same', activation='relu'),
+            layers.Conv2D(32, 5, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(32, 3, padding='same', activation='relu'),
+            layers.Conv2D(64, 5, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(64, 3, padding='same', activation='relu'),
+            layers.Conv2D(128, 5, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Flatten(),
-            layers.Dense(128, activation='relu'),
+            layers.Dense(256, activation='relu'),
             layers.Dense(num_classes)
         ])
 
@@ -76,7 +77,7 @@ class BackPropagation:
 
         model.summary()
 
-        epochs = 500
+        epochs = 10
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,

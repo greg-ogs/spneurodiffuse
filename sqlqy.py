@@ -13,6 +13,7 @@ class sql_queryl:
 
     def coord(self):
         # def for lv
+
         self.mycursor.execute("SELECT * FROM DATA WHERE ID = 1")
         myresult = self.mycursor.fetchall()
 
@@ -22,6 +23,7 @@ class sql_queryl:
         signal = list_one[3]
         stop = list_one[4]
         m = [x, y, signal, stop]
+
         sql = "UPDATE DATA SET X = %s, Y = %s WHERE ID = %s"
         val = (0, 0, 1)
         self.mycursor.execute(sql, val)

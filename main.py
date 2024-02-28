@@ -230,6 +230,7 @@ class Camera:
                         print('Image incomplete with image status %d ...' % image_result.GetImageStatus())
 
                     else:
+
                         # Getting the image data as a numpy array
                         image_data = image_result.GetNDArray()
                         image_data = np.uint8(image_data)
@@ -239,7 +240,7 @@ class Camera:
                         C = np.dstack((A, B))
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
-                        data = data.resize((180, 180))
+                        data = data.resize((625, 500))
                         plt.imshow(data)
                         plt.show()
                         winner_class = bp.predict(data)
@@ -262,19 +263,19 @@ class Camera:
                             X = -0.003
                             Y = -0.003
                         if (winner_class == 'BUPR-2-2' or winner_class ==  'BUPR-2-3' or winner_class ==  'BUPR-3-2'
-                            or winner_class ==  'BUPR-3-3' or winner_class ==  'BUPRS'):
+                            or winner_class == 'BUPR-3-3' or winner_class ==  'BUPRS'):
                             X = 0.003
                             Y = -0.003
-                        if (winner_class == 'CDW'):
+                        if winner_class == 'CDW':
                             X = 0
                             Y = 0.003
-                        if (winner_class == 'CL'):
+                        if winner_class == 'CL':
                             X = -0.003
                             Y = 0
-                        if (winner_class == 'CR'):
+                        if winner_class == 'CR':
                             X = 0.003
                             Y = 0
-                        if (winner_class == 'CUP'):
+                        if winner_class == 'CUP':
                             X = 0
                             Y = -0.003
                         qry.qy(X, Y)
