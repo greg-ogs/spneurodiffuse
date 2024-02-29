@@ -16,7 +16,7 @@ class BackPropagation:
                             'BUPR-2-2', 'BUPR-2-3', 'BUPR-3-2', 'BUPR-3-3', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP']
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
-        self.batch_size = 64
+        self.batch_size = 32
         self.img_height = 500
         self.img_width = 625
         self.image_size = (self.img_height, self.img_width)
@@ -60,11 +60,11 @@ class BackPropagation:
         #filters * 2 and kernel + 2
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
-            layers.Conv2D(32, 5, padding='same', activation='relu'),
+            layers.Conv2D(32, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(64, 5, padding='same', activation='relu'),
+            layers.Conv2D(64, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(128, 5, padding='same', activation='relu'),
+            layers.Conv2D(128, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Flatten(),
             layers.Dense(256, activation='relu'),
@@ -113,12 +113,11 @@ class BackPropagation:
         input("Enter to continue")
 
     def predict(self, img_data):
-        start_tieme = time.time()
         # img = keras.preprocessing.image.load_img(
         #     img_dir, target_size=self.image_size)
         img_array = tf.keras.utils.img_to_array(img_data)
         img_array = tf.expand_dims(img_array, 0)
-        model = tf.keras.models.load_model("model.h5")
+        model = tf.keras.models.load_model("model.keras")
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
 
@@ -129,9 +128,10 @@ class BackPropagation:
             "This image most likely belongs to {} with a {:.2f} percent confidence."
             .format(self.class_names[np.argmax(score)], 100 * np.max(score))
         )
-        end_time = time.time()
-        elapsed_time = end_time - start_tieme
-        time.sleep(4 - elapsed_time)
+        del model
+        del img_array
+        del predictions
+        tf.keras.backend.clear_session()
         return self.class_names[np.argmax(score)]
 
 

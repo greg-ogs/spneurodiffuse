@@ -244,7 +244,6 @@ class Camera:
                         plt.imshow(data)
                         plt.show()
                         winner_class = bp.predict(data)
-                        print(winner_class)
                         if winner_class == 'CENTER':
                             X = 0
                             Y = 0
@@ -252,32 +251,32 @@ class Camera:
                             self.continue_recording = False
                         if (winner_class == 'BDWL-2-2' or winner_class == 'BDWL-2-3' or winner_class == 'BDWL-3-2'
                                 or winner_class == 'BDWL-3-3' or winner_class == 'BDWLS'):
-                            X = -0.003
-                            Y = 0.003
+                            X = -0.006
+                            Y = 0.006
                         if (winner_class == 'BDWR-2-2' or winner_class == 'BDWR-2-3' or winner_class == 'BDWR-3-2'
                                 or winner_class == 'BDWR-3-3' or winner_class == 'BDWRS'):
-                            X = 0.003
-                            Y = 0.003
+                            X = 0.006
+                            Y = 0.006
                         if (winner_class == 'BUPL-2-2' or winner_class == 'BUPL-2-3' or winner_class == 'BUPL-3-2'
                             or winner_class == 'BUPL-3-3' or winner_class == 'BUPLS'):
-                            X = -0.003
-                            Y = -0.003
+                            X = -0.006
+                            Y = -0.006
                         if (winner_class == 'BUPR-2-2' or winner_class ==  'BUPR-2-3' or winner_class ==  'BUPR-3-2'
                             or winner_class == 'BUPR-3-3' or winner_class ==  'BUPRS'):
-                            X = 0.003
-                            Y = -0.003
+                            X = 0.006
+                            Y = -0.006
                         if winner_class == 'CDW':
                             X = 0
-                            Y = 0.003
+                            Y = 0.006
                         if winner_class == 'CL':
-                            X = -0.003
+                            X = -0.006
                             Y = 0
                         if winner_class == 'CR':
-                            X = 0.003
+                            X = 0.006
                             Y = 0
                         if winner_class == 'CUP':
                             X = 0
-                            Y = -0.003
+                            Y = -0.006
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
