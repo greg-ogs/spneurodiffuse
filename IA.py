@@ -11,9 +11,9 @@ class BackPropagation:
     def __init__(self):
         self.val_ds = None
         self.train_ds = None
-        self.class_names = ['BDWL-2-2', 'BDWL-2-3', 'BDWL-3-2', 'BDWL-3-3', 'BDWLS', 'BDWR-2-2', 'BDWR-2-3',
-                            'BDWR-3-2', 'BDWR-3-3', 'BDWRS', 'BUPL-2-2', 'BUPL-2-3', 'BUPL-3-2', 'BUPL-3-3', 'BUPLS',
-                            'BUPR-2-2', 'BUPR-2-3', 'BUPR-3-2', 'BUPR-3-3', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP']
+        self.class_names = ['BDWL22', 'BDWL23', 'BDWL32', 'BDWL33', 'BDWLS', 'BDWR22', 'BDWR23',
+                            'BDWR32', 'BDWR33', 'BDWRS', 'BUPL22', 'BUPL23', 'BUPL32', 'BUPL33', 'BUPLS',
+                            'BUPR22', 'BUPR23', 'BUPR32', 'BUPR33', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP']
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
         self.batch_size = 32

@@ -1,4 +1,3 @@
-
 """
 Created on Tuesday, January 22 of 2024 by Greg
 """
@@ -19,6 +18,87 @@ from PIL import Image
 from PIL import Image as im
 import mysql.connector
 from IA import BackPropagation
+
+
+class WinnerMove:
+    def BDWL22(self):
+        return -0.01, 0.02, True
+
+    def BDWL23(self):
+        return -0.01, 0.007, True
+
+    def BDWL32(self):
+        return -0.006, 0.02, True
+
+    def BDWL33(self):
+        return -0.005, 0.006, True
+
+    def BDWLS(self):
+        return -0.015, 0.03, True
+
+    def BDWR22(self):
+        return 0.01, 0.02, True
+
+    def BDWR23(self):
+        return 0.01, 0.007, True
+
+    def BDWR32(self):
+        return 0.006, 0.02, True
+
+    def BDWR33(self):
+        return 0.005, 0.006, True
+
+    def BDWRS(self):
+        return 0.015, 0.03, True
+
+    def BUPL22(self):
+        return -0.01, -0.02, True
+
+    def BUPL23(self):
+        return -0.01, -0.007, True
+
+    def BUPL32(self):
+        return -0.006, -0.02, True
+
+    def BUPL33(self):
+        return -0.005, -0.006, True
+
+    def BUPLS(self):
+        return -0.015, -0.03, True
+
+    def BUPR22(self):
+        return 0.01, -0.02, True
+
+    def BUPR23(self):
+        return 0.01, -0.007, True
+
+    def BUPR32(self):
+        return 0.006, -0.02, True
+
+    def BUPR33(self):
+        return 0.005, -0.006, True
+
+    def BUPRS(self):
+        return 0.015, -0.03, True
+
+    def CDW(self):
+        return 0, 0.004, True
+
+    def CENTER(self):
+        qry = sql_query()
+        qry.lab_stop()
+        return 0, 0, False
+
+    def CL(self):
+        return -0.055, 0, True
+
+    def CR(self):
+        return 0.055, 0, True
+
+    def CUP(self):
+        return 0, -0.004, True
+    def default(self):
+        return 0, 0, False
 
 
 class Camera:
@@ -244,39 +324,42 @@ class Camera:
                         plt.imshow(data)
                         plt.show()
                         winner_class = bp.predict(data)
-                        if winner_class == 'CENTER':
-                            X = 0
-                            Y = 0
-                            qry.lab_stop()
-                            self.continue_recording = False
-                        if (winner_class == 'BDWL-2-2' or winner_class == 'BDWL-2-3' or winner_class == 'BDWL-3-2'
-                                or winner_class == 'BDWL-3-3' or winner_class == 'BDWLS'):
-                            X = -0.006
-                            Y = 0.006
-                        if (winner_class == 'BDWR-2-2' or winner_class == 'BDWR-2-3' or winner_class == 'BDWR-3-2'
-                                or winner_class == 'BDWR-3-3' or winner_class == 'BDWRS'):
-                            X = 0.006
-                            Y = 0.006
-                        if (winner_class == 'BUPL-2-2' or winner_class == 'BUPL-2-3' or winner_class == 'BUPL-3-2'
-                            or winner_class == 'BUPL-3-3' or winner_class == 'BUPLS'):
-                            X = -0.006
-                            Y = -0.006
-                        if (winner_class == 'BUPR-2-2' or winner_class ==  'BUPR-2-3' or winner_class ==  'BUPR-3-2'
-                            or winner_class == 'BUPR-3-3' or winner_class ==  'BUPRS'):
-                            X = 0.006
-                            Y = -0.006
-                        if winner_class == 'CDW':
-                            X = 0
-                            Y = 0.006
-                        if winner_class == 'CL':
-                            X = -0.006
-                            Y = 0
-                        if winner_class == 'CR':
-                            X = 0.006
-                            Y = 0
-                        if winner_class == 'CUP':
-                            X = 0
-                            Y = -0.006
+                        switcher = WinnerMove()
+                        case = getattr(switcher, winner_class, switcher.default)
+                        X, Y, self.continue_recording = case()
+                        # if winner_class == 'CENTER':
+                        #     X = 0
+                        #     Y = 0
+                        #     qry.lab_stop()
+                        #     self.continue_recording = False
+                        # if (winner_class == 'BDWL-2-2' or winner_class == 'BDWL-2-3' or winner_class == 'BDWL-3-2'
+                        #         or winner_class == 'BDWL-3-3' or winner_class == 'BDWLS'):
+                        #     X = -0.006
+                        #     Y = 0.006
+                        # if (winner_class == 'BDWR-2-2' or winner_class == 'BDWR-2-3' or winner_class == 'BDWR-3-2'
+                        #         or winner_class == 'BDWR-3-3' or winner_class == 'BDWRS'):
+                        #     X = 0.006
+                        #     Y = 0.006
+                        # if (winner_class == 'BUPL-2-2' or winner_class == 'BUPL-2-3' or winner_class == 'BUPL-3-2'
+                        #         or winner_class == 'BUPL-3-3' or winner_class == 'BUPLS'):
+                        #     X = -0.006
+                        #     Y = -0.006
+                        # if (winner_class == 'BUPR-2-2' or winner_class == 'BUPR-2-3' or winner_class == 'BUPR-3-2'
+                        #         or winner_class == 'BUPR-3-3' or winner_class == 'BUPRS'):
+                        #     X = 0.006
+                        #     Y = -0.006
+                        # if winner_class == 'CDW':
+                        #     X = 0
+                        #     Y = 0.006
+                        # if winner_class == 'CL':
+                        #     X = -0.006
+                        #     Y = 0
+                        # if winner_class == 'CR':
+                        #     X = 0.006
+                        #     Y = 0
+                        # if winner_class == 'CUP':
+                        #     X = 0
+                        #     Y = -0.006
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
@@ -334,6 +417,7 @@ class Camera:
     #     self.XselectCoor = maxVC[1][arsz]  # coordenada intermedia del segmento con mas intencidad en x
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
+
 class sql_query:
     def __init__(self):
         self.mydb = mysql.connector.connect(
@@ -350,6 +434,7 @@ class sql_query:
         val = (1, 1)
         self.mycursor.execute(sql, val)
         self.mydb.commit()
+
     def qy(self, X, Y):
         # def for py
         sql = "UPDATE DATA SET X = %s, Y = %s, SIGNALS = %s WHERE ID = %s"
@@ -378,8 +463,6 @@ class sql_query:
             time.sleep(1)
             if myresult == 0:
                 break
-
-
 
 
 if __name__ == "__main__":
