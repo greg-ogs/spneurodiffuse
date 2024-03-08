@@ -461,6 +461,7 @@ class sql_query:
             mycursor0.close()
             mydb0.close()
             time.sleep(1)
+            print(myresult)
             if myresult == 0:
                 break
 
