@@ -13,12 +13,14 @@ class BackPropagation:
         self.train_ds = None
         self.class_names = ['BDWL22', 'BDWL23', 'BDWL32', 'BDWL33', 'BDWLS', 'BDWR22', 'BDWR23',
                             'BDWR32', 'BDWR33', 'BDWRS', 'BUPL22', 'BUPL23', 'BUPL32', 'BUPL33', 'BUPLS',
-                            'BUPR22', 'BUPR23', 'BUPR32', 'BUPR33', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP']
+                            'BUPR22', 'BUPR23', 'BUPR32', 'BUPR33', 'BUPRS', 'CDW', 'CENTER', 'CL', 'CR', 'CUP',
+                            'ncdw', 'ncl', 'ncr', 'ncup']
+
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
-        self.batch_size = 32
-        self.img_height = 500
-        self.img_width = 625
+        self.batch_size = 64
+        self.img_height = 550
+        self.img_width = 680
         self.image_size = (self.img_height, self.img_width)
         self.data_dir = "C:/Users/grego/Downloads/GitHub/DATASET"
 
@@ -55,7 +57,7 @@ class BackPropagation:
         first_image = image_batch[0]
         # Notice the pixel values are now in `[0,1]`.
         print(np.min(first_image), np.max(first_image))
-
+        print(self.class_names)
         num_classes = len(self.class_names)
         #filters * 2 and kernel + 2
         model = Sequential([
@@ -77,7 +79,7 @@ class BackPropagation:
 
         model.summary()
 
-        epochs = 10
+        epochs = 5
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
@@ -128,10 +130,10 @@ class BackPropagation:
             "This image most likely belongs to {} with a {:.2f} percent confidence."
             .format(self.class_names[np.argmax(score)], 100 * np.max(score))
         )
-        del model
-        del img_array
-        del predictions
-        tf.keras.backend.clear_session()
+        # del model
+        # del img_array
+        # del predictions
+        # tf.keras.backend.clear_session()
         return self.class_names[np.argmax(score)]
 
 
