@@ -23,7 +23,6 @@ from IA import BackPropagation
 class WinnerMove:
     def BDWL22(self):
         return -0.015, 0.03, True
-        return -0.015, 0.03, True
 
     def BDWL23(self):
         return -0.015, 0.009, True
@@ -98,6 +97,19 @@ class WinnerMove:
 
     def CUP(self):
         return 0, -0.008, True
+
+    def ncup(self):
+        return 0, -0.01, True
+
+    def ncr(self):
+        return 0.012, 0, True
+
+    def ncl(self):
+        return -0.012, 0 , True
+
+    def ncdw(self):
+        return 0, 0.01, True
+
     def default(self):
         return 0, 0, False
 
@@ -322,46 +334,13 @@ class Camera:
                         C = np.dstack((A, B))
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
-                        data = data.resize((625, 500))
+                        data = data.resize((680, 550))
                         plt.imshow(data)
                         plt.show()
                         winner_class = bp.predict(data)
                         switcher = WinnerMove()
                         case = getattr(switcher, winner_class, switcher.default)
                         X, Y, self.continue_recording = case()
-                        # if winner_class == 'CENTER':
-                        #     X = 0
-                        #     Y = 0
-                        #     qry.lab_stop()
-                        #     self.continue_recording = False
-                        # if (winner_class == 'BDWL-2-2' or winner_class == 'BDWL-2-3' or winner_class == 'BDWL-3-2'
-                        #         or winner_class == 'BDWL-3-3' or winner_class == 'BDWLS'):
-                        #     X = -0.006
-                        #     Y = 0.006
-                        # if (winner_class == 'BDWR-2-2' or winner_class == 'BDWR-2-3' or winner_class == 'BDWR-3-2'
-                        #         or winner_class == 'BDWR-3-3' or winner_class == 'BDWRS'):
-                        #     X = 0.006
-                        #     Y = 0.006
-                        # if (winner_class == 'BUPL-2-2' or winner_class == 'BUPL-2-3' or winner_class == 'BUPL-3-2'
-                        #         or winner_class == 'BUPL-3-3' or winner_class == 'BUPLS'):
-                        #     X = -0.006
-                        #     Y = -0.006
-                        # if (winner_class == 'BUPR-2-2' or winner_class == 'BUPR-2-3' or winner_class == 'BUPR-3-2'
-                        #         or winner_class == 'BUPR-3-3' or winner_class == 'BUPRS'):
-                        #     X = 0.006
-                        #     Y = -0.006
-                        # if winner_class == 'CDW':
-                        #     X = 0
-                        #     Y = 0.006
-                        # if winner_class == 'CL':
-                        #     X = -0.006
-                        #     Y = 0
-                        # if winner_class == 'CR':
-                        #     X = 0.006
-                        #     Y = 0
-                        # if winner_class == 'CUP':
-                        #     X = 0
-                        #     Y = -0.006
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
@@ -375,7 +354,7 @@ class Camera:
                     print('Error: %s' % ex)
                     return False
             time2 = time.time()
-            print('Time = ' + str(time2-time1))
+            print('Time = ' + str(time2 - time1))
         except PySpin.SpinnakerException as ex:
             print('Error: %s' % ex)
             return False
@@ -446,6 +425,14 @@ class sql_query:
         self.mycursor.execute(sql, val)
         self.mydb.commit()
 
+        self.mycursor.execute("SELECT * FROM DATA WHERE ID = 1")
+        myresult = self.mycursor.fetchall()
+
+        list_one = myresult[0]
+        x0 = list_one[1]
+        y0 = list_one[2]
+        print(x0)
+        print(y0)
     def next_step(self):
 
         # def for py
