@@ -18,9 +18,9 @@ class BackPropagation:
 
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
-        self.batch_size = 64
-        self.img_height = 550
-        self.img_width = 680
+        self.batch_size = 128
+        self.img_height = 300
+        self.img_width = 375
         self.image_size = (self.img_height, self.img_width)
         self.data_dir = "C:/Users/grego/Downloads/GitHub/DATASET"
 
@@ -62,14 +62,14 @@ class BackPropagation:
         #filters * 2 and kernel + 2
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
+            layers.Conv2D(16, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
             layers.Conv2D(32, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Conv2D(64, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(128, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
             layers.Flatten(),
-            layers.Dense(256, activation='relu'),
+            layers.Dense(64, activation='relu'),
             layers.Dense(num_classes)
         ])
 

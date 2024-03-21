@@ -22,67 +22,67 @@ from IA import BackPropagation
 
 class WinnerMove:
     def BDWL22(self):
-        return -0.015, 0.03, True
+        return -0.035, 0.04, True
 
     def BDWL23(self):
-        return -0.015, 0.009, True
+        return -0.035, 0.012, True
 
     def BDWL32(self):
-        return -0.007, 0.03, True
+        return -0.02, 0.06, True
 
     def BDWL33(self):
-        return -0.006, 0.008, True
+        return -0.03, 0.013, True
 
     def BDWLS(self):
-        return -0.02, 0.04, True
+        return -0.035, 0.04, True
 
     def BDWR22(self):
-        return 0.015, 0.03, True
+        return 0.035, 0.04, True
 
     def BDWR23(self):
-        return 0.015, 0.009, True
+        return 0.035, 0.012, True
 
     def BDWR32(self):
-        return 0.007, 0.03, True
-
-    def BDWR33(self):
-        return 0.006, 0.008, True
-
-    def BDWRS(self):
         return 0.02, 0.04, True
 
+    def BDWR33(self):
+        return 0.03, 0.013, True
+
+    def BDWRS(self):
+        return 0.035, 0.04, True
+
     def BUPL22(self):
-        return -0.015, -0.03, True
+        return -0.035, -0.04, True
 
     def BUPL23(self):
-        return -0.015, -0.009, True
+        return -0.035, -0.012, True
 
     def BUPL32(self):
-        return -0.007, -0.03, True
-
-    def BUPL33(self):
-        return -0.006, -0.008, True
-
-    def BUPLS(self):
         return -0.02, -0.04, True
 
+    def BUPL33(self):
+        return -0.03, -0.013, True
+
+    def BUPLS(self):
+        return -0.035, -0.04, True
+
     def BUPR22(self):
-        return 0.015, -0.03, True
+        return 0.035, -0.04, True
 
     def BUPR23(self):
-        return 0.015, -0.009, True
+        return 0.035, -0.012, True
 
     def BUPR32(self):
-        return 0.007, -0.03, True
-
-    def BUPR33(self):
-        return 0.006, -0.008, True
-
-    def BUPRS(self):
         return 0.02, -0.04, True
 
+    def BUPR33(self):
+        return 0.03, -0.013, True
+
+    def BUPRS(self):
+        return 0.035, -0.04, True
+
     def CDW(self):
-        return 0, 0.008, True
+        return 0, 0.045, True
 
     def CENTER(self):
         qry = sql_query()
@@ -90,25 +90,25 @@ class WinnerMove:
         return 0, 0, False
 
     def CL(self):
-        return -0.065, 0, True
+        return -0.08, 0, True
 
     def CR(self):
-        return 0.065, 0, True
+        return 0.08, 0, True
 
     def CUP(self):
-        return 0, -0.008, True
+        return 0, -0.045, True
 
     def ncup(self):
-        return 0, -0.01, True
+        return 0, -0.02, True
 
     def ncr(self):
-        return 0.012, 0, True
+        return 0.04, 0, True
 
     def ncl(self):
-        return -0.012, 0 , True
+        return -0.04, 0, True
 
     def ncdw(self):
-        return 0, 0.01, True
+        return 0, 0.02, True
 
     def default(self):
         return 0, 0, False
@@ -334,9 +334,9 @@ class Camera:
                         C = np.dstack((A, B))
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
-                        data = data.resize((680, 550))
-                        plt.imshow(data)
-                        plt.show()
+                        data = data.resize((375, 300))
+                        # plt.imshow(data)
+                        # plt.show()
                         winner_class = bp.predict(data)
                         switcher = WinnerMove()
                         case = getattr(switcher, winner_class, switcher.default)
@@ -353,6 +353,8 @@ class Camera:
                 except PySpin.SpinnakerException as ex:
                     print('Error: %s' % ex)
                     return False
+            plt.imshow(data)
+            plt.show()
             time2 = time.time()
             print('Time = ' + str(time2 - time1))
         except PySpin.SpinnakerException as ex:
