@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 import keyboard
 import numpy as np
 import PySpin
-from PIL import Image
 from PIL import Image as im
 import mysql.connector
 from IA import BackPropagation
@@ -303,7 +302,9 @@ class Camera:
             qry = sql_query()
             # Retrieve and display images
             time1 = time.time()
+            aux = 0
             while self.continue_recording:
+                aux = aux + 1
                 try:
 
                     #  Retrieve next received image
@@ -335,12 +336,15 @@ class Camera:
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
                         data = data.resize((375, 300))
+                        imname = "img_" + str(aux) + ".png"
+                        imsave = data.save(imname)
                         # plt.imshow(data)
                         # plt.show()
                         winner_class = bp.predict(data)
                         switcher = WinnerMove()
                         case = getattr(switcher, winner_class, switcher.default)
                         X, Y, self.continue_recording = case()
+                        qry.map_sql(X, Y)
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
@@ -414,6 +418,16 @@ class sql_query:
 
         self.mycursor = self.mydb.cursor()
 
+    def map_sql(self, X, Y):
+        print("--------------")
+        print(X)
+        print(Y)
+        print("--------------")
+        sql = "INSERT INTO MAPING (X, Y) VALUES (%s, %s)"
+        val = (X, Y)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
+
     def lab_stop(self):
         sql = "UPDATE DATA SET STOP = %s WHERE ID = %s"
         val = (1, 1)
@@ -427,12 +441,14 @@ class sql_query:
         self.mycursor.execute(sql, val)
         self.mydb.commit()
 
+        # Check upload
         self.mycursor.execute("SELECT * FROM DATA WHERE ID = 1")
         myresult = self.mycursor.fetchall()
 
         list_one = myresult[0]
         x0 = list_one[1]
         y0 = list_one[2]
+        print("Upload to  data table...")
         print(x0)
         print(y0)
     def next_step(self):
