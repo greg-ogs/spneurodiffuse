@@ -68,8 +68,12 @@ class BackPropagation:
             layers.MaxPooling2D(),
             layers.Conv2D(64, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
+            layers.Conv2D(128, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
+            layers.Conv2D(128, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
             layers.Flatten(),
-            layers.Dense(64, activation='relu'),
+            layers.Dense(128, activation='relu'),
             layers.Dense(num_classes)
         ])
 
