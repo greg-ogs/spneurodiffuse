@@ -75,13 +75,10 @@ class BackPropagation:
             layers.Dense(128, activation='relu'),
             layers.Dense(num_classes)
         ])
-
         model.compile(optimizer='adam',
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
-
         model.summary()
-
         epochs = 5
         history = model.fit(
             self.train_ds,
