@@ -59,8 +59,6 @@ class BackPropagation:
         print(np.min(first_image), np.max(first_image))
         print(self.class_names)
         num_classes = len(self.class_names)
-        #filters * 2 and kernel + 2
-
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
             layers.Conv2D(16, 7, padding='same', activation='relu'),
