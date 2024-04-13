@@ -102,7 +102,6 @@ class BackPropagation:
         plt.legend(loc='upper right')
         plt.title('Training and Validation Loss')
         plt.show()
-
         model.save('model.keras')
         print("keras done")
         model.save('model.h5')
