@@ -133,5 +133,5 @@ class BackPropagation:
 if __name__ == "__main__":
     mod = BackPropagation()
     # for i in range(3):
-        # mod.predict("C:/Users/grego/Downloads/Drives/Figure 2022-07-18 134302 (1).jpeg")
+    # mod.predict("C:/Users/grego/Downloads/Drives/Figure 2022-07-18 134302 (1).jpeg")
     mod.train_model()
