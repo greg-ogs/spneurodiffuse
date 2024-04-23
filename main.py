@@ -344,7 +344,7 @@ class Camera:
                         switcher = WinnerMove()
                         case = getattr(switcher, winner_class, switcher.default)
                         X, Y, self.continue_recording = case()
-                        qry.map_sql(X, Y)
+                        # qry.map_sql(X, Y)
                         qry.qy(X, Y)
                         qry.next_step()
                         if keyboard.is_pressed('ENTER'):
