@@ -361,6 +361,8 @@ class Camera:
             plt.show()
             time2 = time.time()
             print('Time = ' + str(time2 - time1))
+            ttime = time2 - time1
+            qry.sqltime(ttime)
         except PySpin.SpinnakerException as ex:
             print('Error: %s' % ex)
             return False
@@ -418,6 +420,12 @@ class sql_query:
 
         self.mycursor = self.mydb.cursor()
 
+    def sqltime(self, t_time):
+        print(type(t_time))
+        sql = "INSERT INTO times (ID, time_seg) VALUES (%s, %s)"
+        val = (None, t_time)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
     def map_sql(self, X, Y):
         print("--------------")
         print(X)
