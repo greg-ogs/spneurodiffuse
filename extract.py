@@ -37,11 +37,15 @@ class plotting_data:
         sns.relplot(
             data=self.table,
             x="Step", y=column_y,
-            # palette="ch:r=-.5,l=.75",
-            # hue="Total CPU Usage [%]",
+            palette="magma",
+            hue="Iteration",
+            markers=True,
+            dashes=False,
             kind="line"
         )
         plt.title(title)
+        name = title + '_plot.png'
+        plt.savefig(name, dpi=1000)
         plt.show()
 
 
