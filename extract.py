@@ -1,6 +1,8 @@
 import mysql.connector
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 class sql_query_e:
@@ -25,5 +27,27 @@ class sql_query_e:
         df.to_csv('file.csv', index=False)
 
 
-query_e = sql_query_e()
-query_e.save_query()
+class plotting_data:
+    def __init__(self):
+        self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/1-4.CSV')
+        print(self.table)
+        sns.set_theme(style="darkgrid")
+
+    def plot_table(self, column_y, title):
+        sns.relplot(
+            data=self.table,
+            x="Step", y=column_y,
+            # palette="ch:r=-.5,l=.75",
+            # hue="Total CPU Usage [%]",
+            kind="line"
+        )
+        plt.title(title)
+        plt.show()
+
+
+# query_e = sql_query_e()
+# query_e.save_query()
+plot = plotting_data()
+plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
+plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
+plot.plot_table("Total CPU Utility [%]", "Total CPU Utility over Time")

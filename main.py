@@ -337,7 +337,7 @@ class Camera:
                         data = im.fromarray(image)
                         data = data.resize((375, 300))
                         imname = "img_" + str(aux) + ".png"
-                        imsave = data.save(imname)
+                        # imsave = data.save(imname)
                         # plt.imshow(data)
                         # plt.show()
                         winner_class = bp.predict(data)

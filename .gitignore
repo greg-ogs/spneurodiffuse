@@ -1,3 +1,5 @@
 .idea
 dataset
 Test
+/model.keras
+/model.h5
