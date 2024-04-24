@@ -37,11 +37,12 @@ class plotting_data:
         sns.relplot(
             data=self.table,
             x="Step", y=column_y,
-            palette="magma",
-            hue="Iteration",
-            markers=True,
-            dashes=False,
-            kind="line"
+            # palette="magma",
+            # hue="Iteration",
+            kind="line",
+            units="Iteration", estimator=None
+            # markers=True,
+            # dashes=False
         )
         plt.title(title)
         name = title + '_plot.png'
