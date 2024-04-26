@@ -37,8 +37,8 @@ class plotting_data:
         sns.relplot(
             data=self.table,
             x="Step", y=column_y,
-            # palette="magma",
-            # hue="Iteration",
+            palette="Paired",
+            hue="Iteration",
             kind="line",
             units="Iteration", estimator=None
             # markers=True,
