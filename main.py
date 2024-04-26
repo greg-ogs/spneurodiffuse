@@ -5,11 +5,6 @@ import time
 
 import matplotlib.pyplot as plt
 # import time
-# from skimage.segmentation import slic
-# from skimage.segmentation import mark_boundaries
-# from skimage.util import img_as_float
-# from skimage import io
-# from sklearn.preprocessing import StandardScaler
 # import tensorflow as tf
 import keyboard
 import numpy as np
