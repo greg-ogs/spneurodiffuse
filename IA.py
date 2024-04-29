@@ -73,6 +73,10 @@ class BackPropagation:
             layers.MaxPooling2D(),
             layers.Conv2D(512, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
+            layers.Conv2D(512, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
+            layers.Conv2D(512, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
             layers.Flatten(),
             layers.Dense(512, activation='relu'),
             layers.Dense(num_classes)
@@ -81,7 +85,7 @@ class BackPropagation:
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         model.summary()
-        epochs = 15
+        epochs = 25
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
