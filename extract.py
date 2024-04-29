@@ -24,7 +24,16 @@ class sql_query_e:
             array_0 = np.asarray(myresult[i])
             aux = np.vstack((aux, array_0))
         df = pd.DataFrame(aux, columns=['X', 'Y', 'ID'])
-        df.to_csv('file.csv', index=False)
+        df.to_csv('map.csv', index=False)
+
+        self.mycursor.execute("SELECT * FROM times")
+        myresult = self.mycursor.fetchall()
+        aux = np.asarray(myresult[0])
+        for i in range(1, len(myresult)):
+            array_0 = np.asarray(myresult[i])
+            aux = np.vstack((aux, array_0))
+        df = pd.DataFrame(aux, columns=['ID', 'times'])
+        df.to_csv('times.csv', index=False)
 
 
 class plotting_data:
@@ -50,8 +59,8 @@ class plotting_data:
         plt.show()
 
 
-# query_e = sql_query_e()
-# query_e.save_query()
+query_e = sql_query_e()
+query_e.save_query()
 plot = plotting_data()
 plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
 plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
