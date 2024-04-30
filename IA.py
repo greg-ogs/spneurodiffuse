@@ -18,7 +18,7 @@ class BackPropagation:
 
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
-        self.batch_size = 128
+        self.batch_size = 256
         self.img_height = 400
         self.img_width = 500
         self.image_size = (self.img_height, self.img_width)
@@ -81,7 +81,7 @@ class BackPropagation:
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         model.summary()
-        epochs = 55
+        epochs = 45
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
