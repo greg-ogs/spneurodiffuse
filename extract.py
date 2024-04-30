@@ -65,7 +65,7 @@ class PlottingData:
             x="ID", y='times',
             palette="Paired",
             # hue="Iteration",
-            # kind="line",
+            kind="line",
             # units="Iteration", estimator=None
             # markers=True,
             # dashes=False
