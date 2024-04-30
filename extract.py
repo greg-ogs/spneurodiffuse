@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-class SqlQueryE:
+class sql_query_e:
     def __init__(self):
         self.mydb = mysql.connector.connect(
             host="localhost",
@@ -24,31 +24,21 @@ class SqlQueryE:
             array_0 = np.asarray(myresult[i])
             aux = np.vstack((aux, array_0))
         df = pd.DataFrame(aux, columns=['X', 'Y', 'ID'])
-        df.to_csv('map.csv', index=False)
-
-        self.mycursor.execute("SELECT * FROM times")
-        myresult = self.mycursor.fetchall()
-        aux = np.asarray(myresult[0])
-        for i in range(1, len(myresult)):
-            array_0 = np.asarray(myresult[i])
-            aux = np.vstack((aux, array_0))
-        df = pd.DataFrame(aux, columns=['ID', 'times'])
-        df.to_csv('times.csv', index=False)
+        df.to_csv('file.csv', index=False)
 
 
-class PlottingData:
+class plotting_data:
     def __init__(self):
-        self.table_times = pd.read_csv('times.csv')
-        # self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/1-4.CSV')
-        # print(self.table)
+        self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/1-4.CSV')
+        print(self.table)
         sns.set_theme(style="darkgrid")
 
     def plot_table(self, column_y, title):
         sns.relplot(
             data=self.table,
             x="Step", y=column_y,
-            palette="Paired",
-            hue="Iteration",
+            # palette="magma",
+            # hue="Iteration",
             kind="line",
             units="Iteration", estimator=None
             # markers=True,
@@ -59,28 +49,10 @@ class PlottingData:
         plt.savefig(name, dpi=1000)
         plt.show()
 
-    def plot_times(self):
-        sns.relplot(
-            data=self.table_times,
-            x="ID", y='times',
-            palette="Paired",
-            # hue="Iteration",
-            # kind="line",
-            # units="Iteration", estimator=None
-            # markers=True,
-            # dashes=False
-        )
-        title = 'times'
-        plt.title(title)
-        name = title + '_plot.png'
-        plt.savefig(name, dpi=1000)
-        plt.show()
 
-
-query_e = SqlQueryE()
-query_e.save_query()
-plot = PlottingData()
+# query_e = sql_query_e()
+# query_e.save_query()
+plot = plotting_data()
 plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
 plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
 plot.plot_table("Total CPU Utility [%]", "Total CPU Utility over Time")
-plot.plot_times()
