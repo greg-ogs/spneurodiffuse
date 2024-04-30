@@ -38,8 +38,9 @@ class sql_query_e:
 
 class plotting_data:
     def __init__(self):
-        self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/1-4.CSV')
-        print(self.table)
+        self.table_times = pd.read_csv('times.csv')
+        # self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/1-4.CSV')
+        # print(self.table)
         sns.set_theme(style="darkgrid")
 
     def plot_table(self, column_y, title):
@@ -58,10 +59,28 @@ class plotting_data:
         plt.savefig(name, dpi=1000)
         plt.show()
 
+    def plot_times(self):
+        sns.relplot(
+            data=self.table_times,
+            x="ID", y='times',
+            palette="Paired",
+            # hue="Iteration",
+            # kind="line",
+            # units="Iteration", estimator=None
+            # markers=True,
+            # dashes=False
+        )
+        title = 'times'
+        plt.title(title)
+        name = title + '_plot.png'
+        plt.savefig(name, dpi=1000)
+        plt.show()
 
-query_e = sql_query_e()
-query_e.save_query()
+
+# query_e = sql_query_e()
+# query_e.save_query()
 plot = plotting_data()
-plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
-plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
-plot.plot_table("Total CPU Utility [%]", "Total CPU Utility over Time")
+# plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
+# plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
+# plot.plot_table("Total CPU Utility [%]", "Total CPU Utility over Time")
+plot.plot_times()
