@@ -27,10 +27,10 @@ class SqlQueryE:
         df.to_csv('map.csv', index=False)
 
         self.mycursor.execute("SELECT * FROM times")
-        myresult = self.mycursor.fetchall()
-        aux = np.asarray(myresult[0])
-        for i in range(1, len(myresult)):
-            array_0 = np.asarray(myresult[i])
+        myresult_0 = self.mycursor.fetchall()
+        aux = np.asarray(myresult_0[0])
+        for i in range(1, len(myresult_0)):
+            array_0 = np.asarray(myresult_0[i])
             aux = np.vstack((aux, array_0))
         df = pd.DataFrame(aux, columns=['ID', 'times'])
         df.to_csv('times.csv', index=False)

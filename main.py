@@ -5,7 +5,7 @@ import time
 
 import matplotlib.pyplot as plt
 # import time
-# import tensorflow as tf
+import tensorflow as tf
 import keyboard
 import numpy as np
 import PySpin
@@ -79,7 +79,7 @@ class WinnerMove:
         return 0, 0.045, True
 
     def CENTER(self):
-        qry = sql_query()
+        qry = SqlQuery()
         qry.lab_stop()
         return 0, 0, False
 
@@ -294,10 +294,11 @@ class Camera:
             # Close program
             print('Press enter to close the program..')
             bp = BackPropagation()
-            qry = sql_query()
+            qry = SqlQuery()
             # Retrieve and display images
             time1 = time.time()
             aux = 0
+            model = tf.keras.models.load_model("model.keras")
             while self.continue_recording:
                 aux = aux + 1
                 try:
@@ -330,12 +331,12 @@ class Camera:
                         C = np.dstack((A, B))
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
-                        data = data.resize((375, 300))
+                        data = data.resize((500, 400))
                         imname = "img_" + str(aux) + ".png"
                         # imsave = data.save(imname)
                         # plt.imshow(data)
                         # plt.show()
-                        winner_class = bp.predict(data)
+                        winner_class = bp.predict(data, model)
                         switcher = WinnerMove()
                         case = getattr(switcher, winner_class, switcher.default)
                         X, Y, self.continue_recording = case()
@@ -354,6 +355,7 @@ class Camera:
                     return False
             plt.imshow(data)
             plt.show()
+            data.save('ERROR.png')
             time2 = time.time()
             print('Time = ' + str(time2 - time1))
             ttime = time2 - time1
@@ -404,7 +406,7 @@ class Camera:
     #     self.YselectCoor = maxVC[0][arsz]  # coordenada intermedia del segmento con mas intencidad en y
 
 
-class sql_query:
+class SqlQuery:
     def __init__(self):
         self.mydb = mysql.connector.connect(
             host="localhost",
@@ -421,6 +423,7 @@ class sql_query:
         val = (None, t_time)
         self.mycursor.execute(sql, val)
         self.mydb.commit()
+
     def map_sql(self, X, Y):
         print("--------------")
         print(X)
@@ -454,6 +457,7 @@ class sql_query:
         print("Upload to  data table...")
         print(x0)
         print(y0)
+
     def next_step(self):
 
         # def for py

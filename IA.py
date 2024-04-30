@@ -19,8 +19,8 @@ class BackPropagation:
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
         self.batch_size = 128
-        self.img_height = 300
-        self.img_width = 375
+        self.img_height = 400
+        self.img_width = 500
         self.image_size = (self.img_height, self.img_width)
         self.data_dir = "C:/Users/grego/Downloads/GitHub/DATASET"
 
@@ -73,10 +73,6 @@ class BackPropagation:
             layers.MaxPooling2D(),
             layers.Conv2D(512, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(512, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
-            layers.Conv2D(512, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
             layers.Flatten(),
             layers.Dense(512, activation='relu'),
             layers.Dense(num_classes)
@@ -85,7 +81,7 @@ class BackPropagation:
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         model.summary()
-        epochs = 25
+        epochs = 55
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
@@ -113,12 +109,12 @@ class BackPropagation:
         model.save('model.h5')
         print("h5 done")
         input("Enter to continue")
-    def predict(self, img_data):
+    def predict(self, img_data, model):
         # img = keras.preprocessing.image.load_img(
         #     img_dir, target_size=self.image_size)
         img_array = tf.keras.utils.img_to_array(img_data)
         img_array = tf.expand_dims(img_array, 0)
-        model = tf.keras.models.load_model("model.keras")
+        # model = tf.keras.models.load_model("model.keras")
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
 
