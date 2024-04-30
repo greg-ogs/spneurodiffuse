@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-class sql_query_e:
+class SqlQueryE:
     def __init__(self):
         self.mydb = mysql.connector.connect(
             host="localhost",
@@ -36,7 +36,7 @@ class sql_query_e:
         df.to_csv('times.csv', index=False)
 
 
-class plotting_data:
+class PlottingData:
     def __init__(self):
         self.table_times = pd.read_csv('times.csv')
         # self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/1-4.CSV')
@@ -77,9 +77,9 @@ class plotting_data:
         plt.show()
 
 
-# query_e = sql_query_e()
+# query_e = SqlQueryE()
 # query_e.save_query()
-plot = plotting_data()
+plot = PlottingData()
 # plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
 # plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
 # plot.plot_table("Total CPU Utility [%]", "Total CPU Utility over Time")
