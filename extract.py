@@ -46,7 +46,7 @@ class plotting_data:
         )
         plt.title(title)
         name = title + '_plot.png'
-        plt.savefig(name, dpi=1000)
+        plt.savefig(name, dpi=2000)
         plt.show()
 
 
