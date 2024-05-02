@@ -331,7 +331,7 @@ class Camera:
                         C = np.dstack((A, B))
                         image = np.dstack((C, B))
                         data = im.fromarray(image)
-                        data = data.resize((500, 400))
+                        data = data.resize((375, 300))
                         imname = "img_" + str(aux) + ".png"
                         # imsave = data.save(imname)
                         # plt.imshow(data)

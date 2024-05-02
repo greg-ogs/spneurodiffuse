@@ -18,7 +18,7 @@ class BackPropagation:
 
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
-        self.batch_size = 256
+        self.batch_size = 128
         self.img_height = 400
         self.img_width = 500
         self.image_size = (self.img_height, self.img_width)
@@ -61,6 +61,8 @@ class BackPropagation:
         num_classes = len(self.class_names)
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
+            layers.Conv2D(8, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
             layers.Conv2D(16, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Conv2D(32, 7, padding='same', activation='relu'),
@@ -71,8 +73,6 @@ class BackPropagation:
             layers.MaxPooling2D(),
             layers.Conv2D(256, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(512, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
             layers.Flatten(),
             layers.Dense(512, activation='relu'),
             layers.Dense(num_classes)
@@ -81,7 +81,7 @@ class BackPropagation:
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         model.summary()
-        epochs = 45
+        epochs = 10
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
