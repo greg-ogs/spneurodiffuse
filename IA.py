@@ -109,6 +109,7 @@ class BackPropagation:
         model.save('model.h5')
         print("h5 done")
         input("Enter to continue")
+
     def predict(self, img_data, model):
         # img = keras.preprocessing.image.load_img(
         #     img_dir, target_size=self.image_size)
