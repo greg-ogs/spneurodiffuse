@@ -39,7 +39,7 @@ class SqlQueryE:
 class PlottingData:
     def __init__(self):
         self.table_times = pd.read_csv('times.csv')
-        self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/hw.CSV')
+        # self.table = pd.read_csv('C:/Users/grego/Downloads/GitHub/hw.CSV')
         # print(self.table)
         sns.set_theme(style="darkgrid")
 
@@ -64,11 +64,11 @@ class PlottingData:
             data=self.table_times,
             x="ID", y='times',
             palette="Paired",
-            # hue="Iteration",
+            hue="control",
             # kind="line",
             # units="Iteration", estimator=None
-            # markers=True,
-            # dashes=False
+            markers=True,
+            dashes=False
         )
         title = 'times'
         plt.title(title)
@@ -77,8 +77,8 @@ class PlottingData:
         plt.show()
 
 
-query_e = SqlQueryE()
-query_e.save_query()
+# query_e = SqlQueryE()
+# query_e.save_query()
 plot = PlottingData()
 # plot.plot_table("Physical Memory Load [%]", "Physical Memory Load over Time")
 # plot.plot_table("CPU Package Power [W]", "CPU Package Power over Time")
