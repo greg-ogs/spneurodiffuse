@@ -32,7 +32,7 @@ class BackPropagation:
             self.data_dir,
             validation_split=0.2,
             subset="training",
-            seed=123,
+            seed=350,
             image_size=(self.img_height, self.img_width),
             batch_size=self.batch_size)
 
@@ -40,7 +40,7 @@ class BackPropagation:
             self.data_dir,
             validation_split=0.2,
             subset="validation",
-            seed=123,
+            seed=350,
             image_size=(self.img_height, self.img_width),
             batch_size=self.batch_size)
 
@@ -61,27 +61,30 @@ class BackPropagation:
         num_classes = len(self.class_names)
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
-            layers.Conv2D(8, 7, padding='same', activation='relu'),
+            layers.Conv2D(64, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(16, 7, padding='same', activation='relu'),
+            layers.Conv2D(64, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(32, 7, padding='same', activation='relu'),
+            layers.Conv2D(128, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(64, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
-            layers.Conv2D(128, 7, padding='same', activation='relu'),
+            layers.Conv2D(128, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Conv2D(256, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
+            layers.Conv2D(256, 7, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
+            layers.Conv2D(512, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Flatten(),
             layers.Dense(512, activation='relu'),
             layers.Dense(num_classes)
         ])
-        model.compile(optimizer='adam',
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025)
+        model.compile(optimizer=optimizer,
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         model.summary()
-        epochs = 10
+        epochs = 20
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
