@@ -19,8 +19,8 @@ class BackPropagation:
         # Batch * 2 and image from 180 by 180 to 700 * 875
 
         self.batch_size = 128
-        self.img_height = 300
-        self.img_width = 375
+        self.img_height = 400
+        self.img_width = 500
         self.image_size = (self.img_height, self.img_width)
         self.data_dir = "C:/Users/grego/Downloads/GitHub/DATASET"
 
@@ -32,7 +32,7 @@ class BackPropagation:
             self.data_dir,
             validation_split=0.2,
             subset="training",
-            seed=123,
+            seed=350,
             image_size=(self.img_height, self.img_width),
             batch_size=self.batch_size)
 
@@ -40,7 +40,7 @@ class BackPropagation:
             self.data_dir,
             validation_split=0.2,
             subset="validation",
-            seed=123,
+            seed=350,
             image_size=(self.img_height, self.img_width),
             batch_size=self.batch_size)
 
@@ -61,31 +61,30 @@ class BackPropagation:
         num_classes = len(self.class_names)
         model = Sequential([
             layers.Rescaling(1. / 255, input_shape=(self.img_height, self.img_width, 3)),
-            layers.Conv2D(16, 7, padding='same', activation='relu'),
+            layers.Conv2D(64, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(32, 7, padding='same', activation='relu'),
+            layers.Conv2D(64, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(64, 7, padding='same', activation='relu'),
+            layers.Conv2D(128, 9, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(128, 7, padding='same', activation='relu'),
+            layers.Conv2D(128, 9, padding='same', activation='relu'),
+            layers.MaxPooling2D(),
+            layers.Conv2D(256, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Conv2D(256, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
             layers.Conv2D(512, 7, padding='same', activation='relu'),
             layers.MaxPooling2D(),
-            layers.Conv2D(512, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
-            layers.Conv2D(512, 7, padding='same', activation='relu'),
-            layers.MaxPooling2D(),
             layers.Flatten(),
-            layers.Dense(512, activation='relu'),
-            layers.Dense(num_classes)
+            layers.Dense(4608, activation='relu'),
+            layers.Dense(num_classes, activation='softmax')
         ])
-        model.compile(optimizer='adam',
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025)
+        model.compile(optimizer=optimizer,
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         model.summary()
-        epochs = 25
+        epochs = 20
         history = model.fit(
             self.train_ds,
             validation_data=self.val_ds,
@@ -113,12 +112,13 @@ class BackPropagation:
         model.save('model.h5')
         print("h5 done")
         input("Enter to continue")
-    def predict(self, img_data):
+
+    def predict(self, img_data, model):
         # img = keras.preprocessing.image.load_img(
         #     img_dir, target_size=self.image_size)
         img_array = tf.keras.utils.img_to_array(img_data)
         img_array = tf.expand_dims(img_array, 0)
-        model = tf.keras.models.load_model("model.keras")
+        # model = tf.keras.models.load_model("model.keras")
         predictions = model.predict(img_array)
         score = tf.nn.softmax(predictions[0])
 
