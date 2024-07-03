@@ -77,7 +77,7 @@ class BackPropagation:
             layers.MaxPooling2D(),
             layers.Flatten(),
             layers.Dense(4608, activation='relu'),
-            layers.Dense(num_classes)
+            layers.Dense(num_classes, activation='softmax')
         ])
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025)
         model.compile(optimizer=optimizer,
