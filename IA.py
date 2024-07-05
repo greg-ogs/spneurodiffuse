@@ -7,6 +7,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
 
+
+
 class BackPropagation:
     def __init__(self):
         self.val_ds = None
