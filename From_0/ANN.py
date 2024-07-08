@@ -25,6 +25,8 @@ def available_gpu():  # Available nvidia gpu function
 
 class Stage1ANN:  # Classification stage
     def __init__(self):
+        self.tflite_model = None
+        self.prediction = None
         self.num_classes = None  # Classes of the network
         self.x = None  # Input variables for ANN
         self.y = None  # Output variables for ANN
@@ -82,6 +84,10 @@ class Stage1ANN:  # Classification stage
         self.model.summary()
 
     def train(self):
+        # Create a callback that saves the model's weights
+        # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath='cp.ckpt',
+        #                                                  save_weights_only=True,
+        #                                                  verbose=1)
         history = self.model.fit(self.x, self.y, epochs=3, batch_size=32, verbose=1, validation_split=0.2)
         self.model.save('model.keras')
         accuracy = self.model.evaluate(self.x, self.y)
@@ -103,10 +109,24 @@ class Stage1ANN:  # Classification stage
         plt.title('Training and Validation Loss')
         plt.show()
 
-    def predict(self):
-        # for i in range(len(self.myresult)):
-        #     prediction = self.model.predict(i,j)
-        pass
+    def convert(self):
+        converter = tf.lite.TFLiteConverter.from_saved_model('model.keras')  # path to the SavedModel directory
+        self.tflite_model = converter.convert()
+
+        # Save the model.
+        with open('model.tflite', 'wb') as f:
+            f.write(self.tflite_model)
+
+    def predict(self, elapsed_time):
+        reconstructed_model = keras.models.load_model("model.keras")
+        for i in np.arange(0, 25, 0.03):
+            for j in np.arange(0, 25, 0.03):
+                # print(str(round(i, 2)) + ',' + str(round(j, 2)))
+                data = pd.DataFrame([[i, j, elapsed_time]])
+                self.prediction = reconstructed_model.predict(data)
+                if self.prediction[0] > 0.5:
+                    print(self.prediction)
+                    break
 
 
 if __name__ == "__main__":
@@ -117,3 +137,5 @@ if __name__ == "__main__":
     stage1.prepare_data()
     stage1.model()
     stage1.train()
+    elapsed_time = 864000
+    stage1.predict(elapsed_time)
