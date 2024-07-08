@@ -1,2 +1,4 @@
 .idea
 From_0/base_dataset.csv
+From_0/model.weights.h5
+From_0/model.keras

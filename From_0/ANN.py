@@ -25,12 +25,14 @@ def available_gpu():  # Available nvidia gpu function
 
 class Stage1ANN:  # Classification stage
     def __init__(self):
+        self.num_classes = None  # Classes of the network
         self.x = None  # Input variables for ANN
         self.y = None  # Output variables for ANN
 
         self.myresult = None  # DATASET
         self.mycursor = None
         self.mydb = None
+        self.loaded_dataset = None
 
     def load_data(self):
         # Load from MySQL
@@ -45,18 +47,25 @@ class Stage1ANN:  # Classification stage
         self.mycursor.execute("SELECT * FROM base_dataset")
         self.myresult = self.mycursor.fetchall()
         self.mydb.close()
-        loaded_dataset = pd.DataFrame(self.myresult, columns=['ID', 'X', 'Y', 'RESULT', 'T0'])
+        self.loaded_dataset = pd.DataFrame(self.myresult, columns=['ID', 'X', 'Y', 'RESULT0', 'T0', 'RESULT1', 'T1',
+                                                                   'RESULT2', 'T2', 'RESULT3', 'T3'])
         # print(loaded_dataset.head())
-        return loaded_dataset
 
-    def prepare_data(self, loaded_dataset):
-        self.x = loaded_dataset.drop(columns=['ID', 'RESULT'])
-        self.y = loaded_dataset['RESULT']
-        # print('x head')
-        # print(self.x.head())
-        # print('y head')
-        # print(self.y.head())
-        # return self.x, self.y
+    def prepare_data(self):
+        # self.x = self.loaded_dataset.drop(columns=['ID', 'RESULT0', 'RESULT1', 'RESULT2', 'RESULT3'])
+        # self.y = self.loaded_dataset[['RESULT0', 'RESULT1', 'RESULT2', 'RESULT3']]
+        self.x = np.vstack((np.hstack((self.loaded_dataset['X'].to_numpy(), self.loaded_dataset['X'].to_numpy(),
+                                       self.loaded_dataset['X'].to_numpy(), self.loaded_dataset['X'].to_numpy())),
+                            np.hstack((self.loaded_dataset['Y'].to_numpy(), self.loaded_dataset['Y'].to_numpy(),
+                                       self.loaded_dataset['Y'].to_numpy(), self.loaded_dataset['Y'].to_numpy())),
+                            np.hstack((self.loaded_dataset['T0'].to_numpy(), self.loaded_dataset['T1'].to_numpy(),
+                                       self.loaded_dataset['T2'].to_numpy(), self.loaded_dataset['T3'].to_numpy()))
+                            ))
+        # print(self.x.shape)
+        self.y = np.hstack((self.loaded_dataset['RESULT0'].to_numpy(), self.loaded_dataset['RESULT1'].to_numpy(),
+                            self.loaded_dataset['RESULT2'].to_numpy(), self.loaded_dataset['RESULT3'].to_numpy()))
+
+        self.x = self.x.T
 
     def model(self):
         self.num_classes = len(np.unique(self.y))
@@ -68,16 +77,19 @@ class Stage1ANN:  # Classification stage
         self.model.add(Dense(units=256, activation='relu'))
         self.model.add(Dense(units=1, activation='sigmoid'))
 
-        self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=1e-3),
+                           metrics=['accuracy'])
+        self.model.summary()
 
     def train(self):
         history = self.model.fit(self.x, self.y, epochs=3, batch_size=32, verbose=1, validation_split=0.2)
-
+        self.model.save('model.keras')
+        accuracy = self.model.evaluate(self.x, self.y)
         acc = history.history['accuracy']
         val_acc = history.history['val_accuracy']
         loss = history.history['loss']
         val_loss = history.history['val_loss']
-        epochs_range = range(1000)
+        epochs_range = range(3)
         plt.figure(figsize=(8, 8))
         plt.subplot(1, 2, 1)
         plt.plot(epochs_range, acc, label='Training Accuracy')
@@ -91,11 +103,17 @@ class Stage1ANN:  # Classification stage
         plt.title('Training and Validation Loss')
         plt.show()
 
+    def predict(self):
+        # for i in range(len(self.myresult)):
+        #     prediction = self.model.predict(i,j)
+        pass
+
 
 if __name__ == "__main__":
+    # tf.config.set_visible_devices([], 'GPU')
     available_gpu()
     stage1 = Stage1ANN()
-    dataset = stage1.load_data()
-    stage1.prepare_data(dataset)
+    stage1.load_data()
+    stage1.prepare_data()
     stage1.model()
     stage1.train()

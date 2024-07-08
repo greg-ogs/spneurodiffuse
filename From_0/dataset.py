@@ -70,7 +70,7 @@ class Dataset:
             print(f"Unexpected error while reading '{self.file_path}': {e}")
 
     def insert_bool(self, x_d, y_d, x_u, y_u):
-        query = "UPDATE base_dataset SET RESULT = %s WHERE C1 > %s AND C2 > %s AND C1 < %s AND C2 < %s"
+        query = "UPDATE base_dataset SET RESULT_2 = %s WHERE C1 > %s AND C2 > %s AND C1 < %s AND C2 < %s"
         val = (1, x_d, y_d, x_u, y_u)
         self.mycursor.execute(query, val)
         self.mydb.commit()
@@ -79,8 +79,8 @@ class Dataset:
 if __name__ == '__main__':
     dataset = Dataset()
     # dataset.load_dataset()
-    x = 15.05
-    y = 10.05
+    x = 15.16
+    y = 11.75
     xd = round(x - 0.1, 2)
     yd = round(y - 0.1, 2)
     xu = round(x + 0.1, 2)
