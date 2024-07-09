@@ -144,7 +144,7 @@ class Stage1ANN:  # Classification stage
         with open('model.tflite', 'wb') as f:
             f.write(self.tflite_model)
 
-    def predict(self, elapsed_time):
+    def predict(self):
         winning_result = np.array([[0, 0]])
         reconstructed_model = keras.models.load_model("model.keras")
         for i in tqdm(np.arange(0, 25, 0.1), desc='Predicting X'):
@@ -169,5 +169,4 @@ if __name__ == "__main__":
     stage1.prepare_data()
     stage1.model()
     stage1.train()
-    elapsed = 153900
-    stage1.predict(elapsed)
+    stage1.predict()
