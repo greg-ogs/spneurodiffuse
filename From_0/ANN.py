@@ -42,7 +42,7 @@ class Stage1ANN:  # Classification stage
     def load_data(self):
         # Load from MySQL
         self.mydb = mysql.connect(
-            host="172.17.0.3",
+            host="172.17.0.1",  # Use docker inspect <docker id > for ip
             user="user",
             database="dataset",
             password="userpass", port=3306
