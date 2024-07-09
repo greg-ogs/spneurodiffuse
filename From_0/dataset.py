@@ -37,7 +37,7 @@ class Dataset:
 
         # MySQL
         self.mydb = mysql.connect(
-            host="172.17.0.2",
+            host="172.17.0.3",
             user="user",
             database="dataset",
             password="userpass", port=3306
@@ -69,9 +69,11 @@ class Dataset:
 
             print(f"Unexpected error while reading '{self.file_path}': {e}")
 
-    def insert_bool(self, x_d, y_d, x_u, y_u):
-        query = "UPDATE base_dataset SET RESULT_2 = %s WHERE C1 > %s AND C2 > %s AND C1 < %s AND C2 < %s"
-        val = (1, x_d, y_d, x_u, y_u)
+    def insert_bool(self, x_d, y_d, x_u, y_u, el_t):
+        query = ("UPDATE base_dataset SET RESULT_2 = %s, TIME_ELAPSED_2_seconds = %s WHERE C1 > %s AND C2 > %s AND"
+                 " C1 < %s AND C2 < %s ;")
+
+        val = (1, el_t, x_d, y_d, x_u, y_u)
         self.mycursor.execute(query, val)
         self.mydb.commit()
 
@@ -79,10 +81,11 @@ class Dataset:
 if __name__ == '__main__':
     dataset = Dataset()
     # dataset.load_dataset()
-    x = 15.16
-    y = 11.75
+    x = 16.81
+    y = 12.01
+    elt = int(np.round((np.random.rand() * (864000 - 86400 + 1) + 86400), 0))
     xd = round(x - 0.1, 2)
     yd = round(y - 0.1, 2)
     xu = round(x + 0.1, 2)
     yu = round(y + 0.1, 2)
-    dataset.insert_bool(xd, yd, xu, yu)
+    dataset.insert_bool(xd, yd, xu, yu, elt)
