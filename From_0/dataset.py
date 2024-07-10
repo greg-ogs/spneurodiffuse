@@ -11,8 +11,8 @@ import mysql.connector as mysql
 def create_base_dataset():
     # High RAM memory, low time
     print("Creating base dataset...")
-    x = np.arange(0, 25, 0.01)  # Creates an array from 0 to 25 for x
-    y = np.arange(0, 25, 0.01)  # Creates an array from 0 to 25 for y
+    x = np.arange(0, 25, 0.1)  # Creates an array from 0 to 25 for x
+    y = np.arange(0, 25, 0.1)  # Creates an array from 0 to 25 for y
     coords = np.array(np.meshgrid(x, y)).T.reshape(-1, 2)
     coords = np.round(coords, 3)
     n_dataset = pd.DataFrame(coords)
@@ -37,7 +37,7 @@ class Dataset:
 
         # MySQL
         self.mydb = mysql.connect(
-            host="172.17.0.3",
+            host="172.17.0.2",
             user="user",
             database="dataset",
             password="userpass", port=3306
@@ -69,11 +69,9 @@ class Dataset:
 
             print(f"Unexpected error while reading '{self.file_path}': {e}")
 
-    def insert_bool(self, x_d, y_d, x_u, y_u, el_t):
-        query = ("UPDATE base_dataset SET RESULT_2 = %s, TIME_ELAPSED_2_seconds = %s WHERE C1 > %s AND C2 > %s AND"
-                 " C1 < %s AND C2 < %s ;")
-
-        val = (1, el_t, x_d, y_d, x_u, y_u)
+    def insert_bool(self, x_d, y_d, x_u, y_u):
+        query = "UPDATE base_dataset_low_res SET RESULT_3 = %s WHERE C1 > %s AND C2 > %s AND C1 < %s AND C2 < %s ;"
+        val = (1, x_d, y_d, x_u, y_u)
         self.mycursor.execute(query, val)
         self.mydb.commit()
 
@@ -81,11 +79,11 @@ class Dataset:
 if __name__ == '__main__':
     dataset = Dataset()
     # dataset.load_dataset()
-    x = 16.81
-    y = 12.01
-    elt = int(np.round((np.random.rand() * (864000 - 86400 + 1) + 86400), 0))
-    xd = round(x - 0.1, 2)
-    yd = round(y - 0.1, 2)
-    xu = round(x + 0.1, 2)
-    yu = round(y + 0.1, 2)
-    dataset.insert_bool(xd, yd, xu, yu, elt)
+    x = 17.9
+    y = 12.8
+    # elt = int(np.round((np.random.rand() * (864000 - 86400 + 1) + 86400), 0))
+    xd = round(x - 0.3, 1)
+    yd = round(y - 0.3, 1)
+    xu = round(x + 0.3, 1)
+    yu = round(y + 0.3, 1)
+    dataset.insert_bool(xd, yd, xu, yu)
