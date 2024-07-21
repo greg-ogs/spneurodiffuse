@@ -9,8 +9,19 @@ import mysql.connector as mysql
 
 class Datasets:
     def __init__(self):
+        self.rand_xv = None
+        self.rand_yv = None
         self.yv = None
         self.xv = None
+
+        # MySQL
+        self.mydb = mysql.connect(
+            host="172.17.0.2",
+            user="user",
+            database="dataset",
+            password="userpass", port=3306
+        )
+        self.mycursor = self.mydb.cursor()
     @staticmethod
     def create_base_dataset():  # Create a dataset using all possible combinations
         # High RAM memory, low time
@@ -18,7 +29,7 @@ class Datasets:
         x = np.arange(0, 25, 0.1)  # Creates an array from 0 to 25 for x
         y = np.arange(0, 25, 0.1)  # Creates an array from 0 to 25 for y
         coords = np.array(np.meshgrid(x, y)).T.reshape(-1, 2)
-        coords = np.round(coords, 3)
+        coords = np.round(coords, 2)
         n_dataset = pd.DataFrame(coords)
         n_dataset.head(100)
         n_dataset.to_csv("base_dataset.csv", index=False)
@@ -46,25 +57,52 @@ class Datasets:
         xv = np.arange(lxd, lxu, 0.01)
         return xv
 
+    @staticmethod
+    def create_random_range(coord):
+        while True:
+            rand_c = np.round(np.random.uniform(low=2, high=24, size=2), 2)
+            if coord[0] == rand_c[0] or coord[1] == rand_c[1]:
+                print('Same coordinates, trying again')
+                rand_c = np.round(np.random.uniform(low=2, high=24, size=2), 2)
+            else: break
+        rand_x_v = Datasets.create_dynamic_range(rand_c[0])
+        rand_y_v = Datasets.create_dynamic_range(rand_c[1])
+        return rand_x_v, rand_y_v
+
     def concatenate_coordinates(self, x, y):
         self.xv = self.create_dynamic_range(x)
         self.yv = self.create_dynamic_range(y)
 
+        self.rand_xv, self.rand_yv = Datasets.create_random_range(np.array([x, y]))
+
+        print('Vector x aleatorio: {}'.format(self.rand_xv), 'Vector y aleatorio: {}'.format(self.rand_yv))
+
         print('X vector: {}'.format(self.xv))
         print('Y vector: {}'.format(self.yv))
 
-        aux = 0
         for coordinates in zip(self.xv, self.yv):
-            print("Pair of coordinates: {}, {}".format(round(coordinates[0], 3), round(coordinates[1], 3)))
-            aux = aux + 1
-            # add mysql query to insert the columns
+            print("Pair of coordinates: {}, {}".format(round(coordinates[0], 2), round(coordinates[1], 2)))
+            query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
+            val = (coordinates[0], coordinates[1], 1)
+            self.mycursor.execute(query, val)
+            self.mydb.commit()
 
-        print(aux)
         if x <= 1 or y <= 1 or x >= 24 or y >= 24:
-            print("Pair of real coordinates: {}, {}".format(round(x, 3), round(y, 3)))
-            # add mysql query to insert the original pair of coordinates several times
-            pass
+            print("Pair of real coordinates: {}, {}".format(round(x, 2), round(y, 2)))
+            query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
+            val = (round(x, 2), round(y, 2), 1)
+            self.mycursor.execute(query, val)
+            self.mydb.commit()
 
+        for rand_coordinates in zip(self.rand_xv, self.rand_yv):
+            print("Pair of coordinates: {}, {}".format(round(rand_coordinates[0], 2), round(rand_coordinates[1], 2)))
+            query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
+            val = (rand_coordinates[0], rand_coordinates[1], 0)
+            self.mycursor.execute(query, val)
+            self.mydb.commit()
+        self.mydb.close()
+
+# Deprecated class
 class ReadDataset:
     def __init__(self):
         self.dataset = None
@@ -112,14 +150,5 @@ class ReadDataset:
 
 if __name__ == '__main__':
     newDataset = Datasets()
-    newDataset.concatenate_coordinates(12.5, 24.6)
-
+    # newDataset.concatenate_coordinates(12.17, 24.3)
     # dataset = ReadDataset()
-    # To update data into mysql server table
-    # x = 17.9
-    # y = 12.8
-    # xd = round(x - 0.3, 1)
-    # yd = round(y - 0.3, 1)
-    # xu = round(x + 0.3, 1)
-    # yu = round(y + 0.3, 1)
-    # dataset.insert_bool(xd, yd, xu, yu)

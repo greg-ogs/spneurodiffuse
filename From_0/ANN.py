@@ -28,6 +28,7 @@ def available_gpu():  # Available nvidia gpu function
 
 class Stage1ANN:  # Classification stage
     def __init__(self):
+        self.model = None
         self.tflite_model = None
         self.prediction = [0,]
         self.num_classes = None  # Classes of the network
@@ -42,46 +43,29 @@ class Stage1ANN:  # Classification stage
     def load_data(self):
         # Load from MySQL
         self.mydb = mysql.connect(
-            host="172.17.0.1",  # Use docker inspect <docker id > for ip
+            host="172.17.0.2",  # Use docker inspect <docker id > for ip
             user="user",
             database="dataset",
             password="userpass", port=3306
         )
 
         self.mycursor = self.mydb.cursor()
-        self.mycursor.execute("SELECT * FROM base_dataset")
+        self.mycursor.execute("SELECT * FROM dynamic")
         self.myresult = self.mycursor.fetchall()
         self.mydb.close()
-        self.loaded_dataset = pd.DataFrame(self.myresult, columns=['ID', 'X', 'Y', 'RESULT0', 'T0', 'RESULT1', 'T1',
-                                                                   'RESULT2', 'T2', 'RESULT3', 'T3'])
+        self.loaded_dataset = pd.DataFrame(self.myresult, columns=['ID', 'X', 'Y', 'RESULT'])
         # print(loaded_dataset.head())
 
     def prepare_data(self):
-        # self.x = np.vstack((np.hstack((self.loaded_dataset['X'].to_numpy(), self.loaded_dataset['X'].to_numpy(),
-        #                                self.loaded_dataset['X'].to_numpy(), self.loaded_dataset['X'].to_numpy())),
-        #                     np.hstack((self.loaded_dataset['Y'].to_numpy(), self.loaded_dataset['Y'].to_numpy(),
-        #                                self.loaded_dataset['Y'].to_numpy(), self.loaded_dataset['Y'].to_numpy())),
-        #                     np.hstack((self.loaded_dataset['T0'].to_numpy(), self.loaded_dataset['T1'].to_numpy(),
-        #                                self.loaded_dataset['T2'].to_numpy(), self.loaded_dataset['T3'].to_numpy()))
-        #                     ))
+        self.x = self.loaded_dataset[['X', 'Y']].values
+        self.y = self.loaded_dataset[['RESULT']].values
 
-        self.x = np.vstack((np.hstack((self.loaded_dataset['X'].to_numpy(), self.loaded_dataset['X'].to_numpy(),
-                                       self.loaded_dataset['X'].to_numpy(), self.loaded_dataset['X'].to_numpy())),
-                            np.hstack((self.loaded_dataset['Y'].to_numpy(), self.loaded_dataset['Y'].to_numpy(),
-                                       self.loaded_dataset['Y'].to_numpy(), self.loaded_dataset['Y'].to_numpy()))
-                            ))
-
-        # print(self.x.shape)
-        self.y = np.hstack((self.loaded_dataset['RESULT0'].to_numpy(), self.loaded_dataset['RESULT1'].to_numpy(),
-                            self.loaded_dataset['RESULT2'].to_numpy(), self.loaded_dataset['RESULT3'].to_numpy()))
-
-        self.x = self.x.T
         px = pd.DataFrame(self.x)
         py = pd.DataFrame(self.y)
         print(px.info)
         print(py.info)
 
-    def model(self):
+    def set_model(self):
         lr_schedule = ExponentialDecay(
             initial_learning_rate=1e-3,
             decay_steps=10000,  # Number of steps before decay
@@ -90,6 +74,7 @@ class Stage1ANN:  # Classification stage
         optimizer = keras.optimizers.Adam(learning_rate=lr_schedule)
 
         self.num_classes = len(np.unique(self.y))
+        print(self.x.shape[1], '------------------------------')
 
         self.model = Sequential()
         self.model.add(Dense(units=128, activation='relu', input_dim=self.x.shape[1]))
@@ -98,23 +83,23 @@ class Stage1ANN:  # Classification stage
         self.model.add(Dense(units=128, activation='relu'))
         self.model.add(Dense(units=1, activation='sigmoid'))
 
-        self.model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=0.00001),
+        self.model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=0.000001),
                            metrics=['accuracy'])
         self.model.summary()
 
     def train(self):
         # Create a callback that saves the model's weights
         cp_callback = [keras.callbacks.ModelCheckpoint(filepath='model.{epoch:03d}-{val_accuracy:.2f}.keras',
-                                                       monitor='val_accuracy', verbose=1, save_freq='epoch'),
+                                                       monitor='val_accuracy', verbose=1, save_freq='epoch')
                        # Path of the callback file, monitor is for monitoring a variable and use in conjunction with
                        # mode to choose the best epoch qhe use save_best_only
-                       keras.callbacks.EarlyStopping(patience=2, monitor='val_accuracy', verbose=1,
-                                                     min_delta=0.00001, mode='max')
+                       # keras.callbacks.EarlyStopping(patience=20, monitor='val_accuracy', verbose=1,
+                       #                               min_delta=0.00001, mode='max')
                        # Epoch to wait without improvement is in patience argument, min_delta is minimum improvement
                        # and mode is to stop when the quantity monitored has stopped increasing (max)
                        ]
 
-        history = self.model.fit(self.x, self.y, epochs=100, initial_epoch=0, batch_size=20, verbose=1,
+        history = self.model.fit(self.x, self.y, epochs=30, initial_epoch=0, batch_size=1, verbose=1,
                                  validation_split=0.2, callbacks=cp_callback)
         self.model.save('model.keras')
         accuracy = self.model.evaluate(self.x, self.y)
@@ -122,7 +107,7 @@ class Stage1ANN:  # Classification stage
         val_acc = history.history['val_accuracy']
         loss = history.history['loss']
         val_loss = history.history['val_loss']
-        epochs_range = range(3)
+        epochs_range = range(30)
         plt.figure(figsize=(8, 8))
         plt.subplot(1, 2, 1)
         plt.plot(epochs_range, acc, label='Training Accuracy')
@@ -163,10 +148,17 @@ class Stage1ANN:  # Classification stage
 
 if __name__ == "__main__":
     # tf.config.set_visible_devices([], 'GPU')
-    available_gpu()
-    stage1 = Stage1ANN()
-    stage1.load_data()
-    stage1.prepare_data()
-    stage1.model()
-    stage1.train()
-    stage1.predict()
+    # available_gpu()
+    # stage1 = Stage1ANN()
+    # stage1.load_data()
+    # stage1.prepare_data()
+    # stage1.set_model()
+    # stage1.train()
+    # stage1.predict()
+
+    # Testing models
+    reconstructed_model = keras.models.load_model("model.keras")
+    data = pd.DataFrame([[11.17, 24.3]])
+    # print(type(data))
+    prediction = reconstructed_model.predict(data, verbose=0)
+    print(prediction)
