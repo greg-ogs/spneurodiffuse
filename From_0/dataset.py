@@ -75,77 +75,27 @@ class Datasets:
 
         self.rand_xv, self.rand_yv = Datasets.create_random_range(np.array([x, y]))
 
-        print('Vector x aleatorio: {}'.format(self.rand_xv), 'Vector y aleatorio: {}'.format(self.rand_yv))
-
-        print('X vector: {}'.format(self.xv))
-        print('Y vector: {}'.format(self.yv))
-
         for coordinates in zip(self.xv, self.yv):
-            print("Pair of coordinates: {}, {}".format(round(coordinates[0], 2), round(coordinates[1], 2)))
+            # print("Pair of coordinates: {}, {}".format(round(coordinates[0], 2), round(coordinates[1], 2)))
             query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
             val = (coordinates[0], coordinates[1], 1)
             self.mycursor.execute(query, val)
             self.mydb.commit()
 
         if x <= 1 or y <= 1 or x >= 24 or y >= 24:
-            print("Pair of real coordinates: {}, {}".format(round(x, 2), round(y, 2)))
+            # print("Pair of real coordinates: {}, {}".format(round(x, 2), round(y, 2)))
             query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
             val = (round(x, 2), round(y, 2), 1)
             self.mycursor.execute(query, val)
             self.mydb.commit()
 
         for rand_coordinates in zip(self.rand_xv, self.rand_yv):
-            print("Pair of coordinates: {}, {}".format(round(rand_coordinates[0], 2), round(rand_coordinates[1], 2)))
+            # print("Pair of coordinates: {}, {}".format(round(rand_coordinates[0], 2), round(rand_coordinates[1], 2)))
             query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
             val = (rand_coordinates[0], rand_coordinates[1], 0)
             self.mycursor.execute(query, val)
             self.mydb.commit()
         self.mydb.close()
-
-# Deprecated class
-class ReadDataset:
-    def __init__(self):
-        self.dataset = None
-        self.file_path = None
-
-        # MySQL
-        self.mydb = mysql.connect(
-            host="172.17.0.2",
-            user="user",
-            database="dataset",
-            password="userpass", port=3306
-        )
-
-        self.mycursor = self.mydb.cursor()
-
-    # initial adjusment
-    def load_dataset_from_csv(self):
-        try:
-            self.file_path = 'base_dataset.csv'
-            self.dataset = pd.read_csv(self.file_path)
-            print(self.dataset.shape)
-
-        except FileNotFoundError:
-
-            print(f"Error: File '{self.file_path}' not found.")
-
-        except pd.errors.EmptyDataError:
-
-            print(f"Error: File '{self.file_path}' is empty.")
-
-        except pd.errors.ParserError:
-
-            print(f"Error: Parsing error while reading '{self.file_path}'.")
-
-        except Exception as e:  # Catch-all for other unexpected errors
-
-            print(f"Unexpected error while reading '{self.file_path}': {e}")
-
-    def insert_bool(self, x_d, y_d, x_u, y_u):
-        query = "UPDATE base_dataset_low_res SET RESULT_3 = %s WHERE C1 > %s AND C2 > %s AND C1 < %s AND C2 < %s ;"
-        val = (1, x_d, y_d, x_u, y_u)
-        self.mycursor.execute(query, val)
-        self.mydb.commit()
 
 
 if __name__ == '__main__':
