@@ -157,6 +157,6 @@ if __name__ == "__main__":
 
     # Testing models
     reconstructed_model = keras.models.load_model("model.keras")
-    data = pd.DataFrame([[11.9, 24.6]])
+    data = pd.DataFrame([[12.5, 24.5]])
     prediction = reconstructed_model.predict(data, verbose=0)
     print(prediction)
