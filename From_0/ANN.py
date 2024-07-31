@@ -90,16 +90,16 @@ class Stage1ANN:  # Classification stage
     def train(self):
         # Create a callback that saves the model's weights
         cp_callback = [keras.callbacks.ModelCheckpoint(filepath='model.{epoch:03d}-{val_accuracy:.2f}.keras',
-                                                       monitor='val_accuracy', verbose=1, save_freq='epoch')
+                                                       monitor='val_accuracy', verbose=1, save_freq='epoch'),
                        # Path of the callback file, monitor is for monitoring a variable and use in conjunction with
                        # mode to choose the best epoch qhe use save_best_only
-                       # keras.callbacks.EarlyStopping(patience=20, monitor='val_accuracy', verbose=1,
-                       #                               min_delta=0.00001, mode='max')
+                       keras.callbacks.EarlyStopping(patience=5, monitor='val_loss', verbose=1,
+                                                     min_delta=0.00001, mode='min')
                        # Epoch to wait without improvement is in patience argument, min_delta is minimum improvement
                        # and mode is to stop when the quantity monitored has stopped increasing (max)
                        ]
 
-        history = self.model.fit(self.x, self.y, epochs=30, initial_epoch=0, batch_size=1, verbose=1,
+        history = self.model.fit(self.x, self.y, epochs=20, initial_epoch=0, batch_size=1, verbose=1,
                                  validation_split=0.2, callbacks=cp_callback)
         self.model.save('model.keras')
         accuracy = self.model.evaluate(self.x, self.y)
@@ -107,7 +107,7 @@ class Stage1ANN:  # Classification stage
         val_acc = history.history['val_accuracy']
         loss = history.history['loss']
         val_loss = history.history['val_loss']
-        epochs_range = range(30)
+        epochs_range = range(20)
         plt.figure(figsize=(8, 8))
         plt.subplot(1, 2, 1)
         plt.plot(epochs_range, acc, label='Training Accuracy')
@@ -147,8 +147,7 @@ class Stage1ANN:  # Classification stage
 
 
 if __name__ == "__main__":
-    # tf.config.set_visible_devices([], 'GPU')
-    # available_gpu()
+    available_gpu()
     # stage1 = Stage1ANN()
     # stage1.load_data()
     # stage1.prepare_data()
@@ -158,7 +157,6 @@ if __name__ == "__main__":
 
     # Testing models
     reconstructed_model = keras.models.load_model("model.keras")
-    data = pd.DataFrame([[11.17, 24.3]])
-    # print(type(data))
+    data = pd.DataFrame([[11.9, 24.6]])
     prediction = reconstructed_model.predict(data, verbose=0)
     print(prediction)

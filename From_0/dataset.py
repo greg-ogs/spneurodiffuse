@@ -46,35 +46,39 @@ class Datasets:
 
     @staticmethod
     def create_dynamic_range(coord):
-
-        if coord >= 1: lxd = coord - 1; dr = 0
-        else: lxd = 0; dr = 1-coord;
-        if coord <= 24: lxu = coord + 1; ur = 0
-        else: lxu = 25; ur = (coord + 1) - 25;
+        # Algorithm to create ranges and conditions
+        if coord >= 0.1: lxd = coord - 0.1; dr = 0
+        else: lxd = 0; dr = 0.1-coord;
+        if coord <= 24.9: lxu = coord + 0.1; ur = 0
+        else: lxu = 25; ur = (coord + 0.1) - 25;
         lxd = lxd - ur
         lxu = lxu + dr
-
-        xv = np.arange(lxd, lxu, 0.01)
+        # Creating array of 50
+        xv = np.round(np.linspace(lxd, lxu, 50), 3)
         return xv
 
     @staticmethod
     def create_random_range(coord):
+        # create an array of random numbers that are not the same that input coords
         while True:
-            rand_c = np.round(np.random.uniform(low=2, high=24, size=2), 2)
-            if coord[0] == rand_c[0] or coord[1] == rand_c[1]:
+            rand_c = np.round(np.random.uniform(low=2, high=24, size=2), 2)  # New array of 2 random numbers
+            if coord[0] == rand_c[0] or coord[1] == rand_c[1]:  # Conditional if the random number is the same that the
+                # real one
                 print('Same coordinates, trying again')
-                rand_c = np.round(np.random.uniform(low=2, high=24, size=2), 2)
+                rand_c = np.round(np.random.uniform(low=2, high=24, size=2), 2)  # Create another random number
+                # to be checked by the conditional
             else: break
-        rand_x_v = Datasets.create_dynamic_range(rand_c[0])
-        rand_y_v = Datasets.create_dynamic_range(rand_c[1])
+        rand_x_v = Datasets.create_dynamic_range(rand_c[0])  # Create a dynamic array of 50 by 1 using the random number
+        rand_y_v = Datasets.create_dynamic_range(rand_c[1])  # The same for y
         return rand_x_v, rand_y_v
 
     def concatenate_coordinates(self, x, y):
-        self.xv = self.create_dynamic_range(x)
-        self.yv = self.create_dynamic_range(y)
+        self.xv = self.create_dynamic_range(x)  # Create a dynamic array of 50 by 1 using the winning coordinate
+        self.yv = self.create_dynamic_range(y)  # Same for y
 
         self.rand_xv, self.rand_yv = Datasets.create_random_range(np.array([x, y]))
 
+        # Mach both x and y arrays for winning coordinates and insert them in MySQL table
         for coordinates in zip(self.xv, self.yv):
             # print("Pair of coordinates: {}, {}".format(round(coordinates[0], 2), round(coordinates[1], 2)))
             query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
@@ -82,13 +86,15 @@ class Datasets:
             self.mycursor.execute(query, val)
             self.mydb.commit()
 
-        if x <= 1 or y <= 1 or x >= 24 or y >= 24:
+        # Add original coordinates if an adjustment in the ranges was made and insert them in MySQL table
+        if x <= 0.1 or y <= 0.1 or x >= 24.9 or y >= 24.9:
             # print("Pair of real coordinates: {}, {}".format(round(x, 2), round(y, 2)))
             query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
             val = (round(x, 2), round(y, 2), 1)
             self.mycursor.execute(query, val)
             self.mydb.commit()
 
+        # Also match the x and y arrays for random coordinates and insert them in MySQL table
         for rand_coordinates in zip(self.rand_xv, self.rand_yv):
             # print("Pair of coordinates: {}, {}".format(round(rand_coordinates[0], 2), round(rand_coordinates[1], 2)))
             query = "INSERT INTO dynamic (X, Y, RESULT) VALUES (%s, %s, %s) ;"
@@ -99,6 +105,7 @@ class Datasets:
 
 
 if __name__ == '__main__':
-    newDataset = Datasets()
-    # newDataset.concatenate_coordinates(12.17, 24.3)
+    for i in range(50):
+        newDataset = Datasets()
+        newDataset.concatenate_coordinates(12.505, 24.057)
     # dataset = ReadDataset()
