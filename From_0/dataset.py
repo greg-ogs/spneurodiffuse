@@ -107,5 +107,5 @@ class Datasets:
 if __name__ == '__main__':
     for i in range(50):
         newDataset = Datasets()
-        newDataset.concatenate_coordinates(12.505, 24.057)
+        newDataset.concatenate_coordinates(12.616, 24.265)
     # dataset = ReadDataset()

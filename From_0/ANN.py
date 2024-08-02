@@ -10,7 +10,6 @@ import mysql.connector as mysql
 from tqdm import tqdm
 
 
-
 def available_gpu():  # Available nvidia gpu function
     gpus = tf.config.list_physical_devices('GPU')
     print("Num GPUs Available: ", len(gpus))
@@ -30,7 +29,6 @@ class Stage1ANN:  # Classification stage
     def __init__(self):
         self.model = None
         self.tflite_model = None
-        self.prediction = [0,]
         self.num_classes = None  # Classes of the network
         self.x = None  # Input variables for ANN
         self.y = None  # Output variables for ANN
@@ -129,34 +127,48 @@ class Stage1ANN:  # Classification stage
         with open('model.tflite', 'wb') as f:
             f.write(self.tflite_model)
 
-    def predict(self):
-        winning_result = np.array([[0, 0]])
-        reconstructed_model = keras.models.load_model("model.keras")
+
+class Stage2ANN:
+    def __init__(self):
+        self.prediction = [0, ]
+        self.reconstructed_model = keras.models.load_model("model.keras")
+
+    def generate_data(self):
         for i in tqdm(np.arange(0, 25, 0.1), desc='Predicting X'):
-            if self.prediction[0] > 0.9:
+            if self.prediction[0] > 0.95:
                 break
-            for j in tqdm(np.arange(0, 25, 0.1), desc='Predicting Y'):
+            for j in np.arange(0, 25, 0.1):
                 # print(str(round(i, 2)) + ',' + str(round(j, 2)))
                 data = pd.DataFrame([[i, j]])
-                self.prediction = reconstructed_model.predict(data, verbose=0)
+                self.prediction = self.reconstructed_model.predict(data, verbose=0)
                 # print(self.prediction[0])
-                if self.prediction[0] > 0.9:
+                if self.prediction[0] > 0.95:
                     print(self.prediction)
                     print(str(i) + ' ' + str(j) + ' are x - y possible coords')
                     break
 
+    def prepare_data(self):
+        pass
+
+    def model_conf(self):
+        pass
+
+    def train_model(self):
+        pass
+
+    def predict(self):
+        pass
+
 
 if __name__ == "__main__":
-    available_gpu()
+    # Testing methods
+    # available_gpu()
+    # Dataset of possibilities
     # stage1 = Stage1ANN()
     # stage1.load_data()
     # stage1.prepare_data()
     # stage1.set_model()
     # stage1.train()
-    # stage1.predict()
-
-    # Testing models
-    reconstructed_model = keras.models.load_model("model.keras")
-    data = pd.DataFrame([[12.5, 24.5]])
-    prediction = reconstructed_model.predict(data, verbose=0)
-    print(prediction)
+    # Final results
+    stage2 = Stage2ANN()
+    stage2.generate_data()
