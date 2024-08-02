@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mysql.connector as mysql
 from tqdm import tqdm
+import concurrent.futures
 
 
 def available_gpu():  # Available nvidia gpu function
@@ -146,6 +147,9 @@ class Stage2ANN:
                     print(self.prediction)
                     print(str(i) + ' ' + str(j) + ' are x - y possible coords')
                     break
+
+    def parallelize(self):
+        pass
 
     def prepare_data(self):
         pass
