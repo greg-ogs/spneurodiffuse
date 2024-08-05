@@ -131,28 +131,35 @@ class Stage1ANN:  # Classification stage
 
 class Stage2ANN:
     def __init__(self):
+        self.dataset_s2 = None
         self.prediction = [0, ]
         self.reconstructed_model = keras.models.load_model("model.keras")
 
     def generate_data(self):
-        for i in tqdm(np.arange(0, 25, 0.1), desc='Predicting X'):
-            if self.prediction[0] > 0.95:
-                break
-            for j in np.arange(0, 25, 0.1):
-                # print(str(round(i, 2)) + ',' + str(round(j, 2)))
-                data = pd.DataFrame([[i, j]])
-                self.prediction = self.reconstructed_model.predict(data, verbose=0)
-                # print(self.prediction[0])
-                if self.prediction[0] > 0.95:
-                    print(self.prediction)
-                    print(str(i) + ' ' + str(j) + ' are x - y possible coords')
-                    break
+        result = np.empty(shape=(0, 2))
+        try:
+            for i in tqdm(np.arange(12, 14, 0.1), desc='Predicting X'):
+                for j in np.arange(24, 25, 0.1):
+                    # print(str(round(i, 2)) + ',' + str(round(j, 2)))
+                    data = np.round(np.array([[i, j]]), 3)
+                    self.prediction = self.reconstructed_model.predict(data, verbose=0)
+                    # print(self.prediction[0])
+                    if self.prediction[0] > 0.95:
+                        # print('\n', self.prediction)
+                        # print(' --------- ' + str(i) + ' ' + str(j) + ' are x - y possible coords -----------')
+                        # print(data.head())
+                        result = np.vstack((result, data))
+        except KeyboardInterrupt:
+            print("Stopping...")
+        self.dataset_s2 = pd.DataFrame(result)
+        # print(self.dataset_s2.head())
+        self.dataset_s2.to_csv('dataset_s2.csv')
 
     def parallelize(self):
         pass
 
     def prepare_data(self):
-        pass
+        print(self.dataset_s2.head())
 
     def model_conf(self):
         pass

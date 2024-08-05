@@ -1,3 +1,4 @@
 .idea
 From_0/base_dataset.csv
 From_0/*.keras
+From_0/dataset_s2.csv
