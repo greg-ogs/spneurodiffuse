@@ -11,33 +11,19 @@ from tqdm import tqdm
 import concurrent.futures
 
 
-def available_gpu():  # Available nvidia gpu function
-    gpus = tf.config.list_physical_devices('GPU')
-    print("Num GPUs Available: ", len(gpus))
-    print('----------------------------------------------------------------')
-    if gpus:
-        # Optionally, print details about each GPU
-        for gpu in gpus:
-            print('----------------------------------------------------------------')
-            print(gpu)
-
-    print('----------------------------------------------------------------')
-    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-    print('----------------------------------------------------------------')
-
-
 class Stage1ANN:  # Classification stage
     def __init__(self):
-        self.model = None
-        self.tflite_model = None
-        self.num_classes = None  # Classes of the network
-        self.x = None  # Input variables for ANN
+        # Instance attributes for availability for any transformation in data and model structure
+        self.stage1_model_s = None # Instance attributes for one unified model structure. (Methods that can
+        # modify the structure under some conditions)
+        self.x = None  # Input variables for ANN. Instance attribute for dataset transformations
         self.y = None  # Output variables for ANN
-
-        self.myresult = None  # DATASET
+        self.loaded_dataset = None
+        # Instance attributes for querying in any method
+        self.myresult = None
         self.mycursor = None
         self.mydb = None
-        self.loaded_dataset = None
+
 
     def load_data(self):
         # Load from MySQL
@@ -59,11 +45,6 @@ class Stage1ANN:  # Classification stage
         self.x = self.loaded_dataset[['X', 'Y']].values
         self.y = self.loaded_dataset[['RESULT']].values
 
-        px = pd.DataFrame(self.x)
-        py = pd.DataFrame(self.y)
-        print(px.info)
-        print(py.info)
-
     def set_model(self):
         lr_schedule = ExponentialDecay(
             initial_learning_rate=1e-3,
@@ -72,21 +53,19 @@ class Stage1ANN:  # Classification stage
         )
         optimizer = keras.optimizers.Adam(learning_rate=lr_schedule)
 
-        self.num_classes = len(np.unique(self.y))
-        print(self.x.shape[1], '------------------------------')
+        model = Sequential()
+        model.add(Dense(units=128, activation='relu', input_dim=self.x.shape[1]))
+        model.add(Dense(units=128, activation='relu'))
+        model.add(Dense(units=128, activation='relu'))
+        model.add(Dense(units=128, activation='relu'))
+        model.add(Dense(units=1, activation='sigmoid'))
 
-        self.model = Sequential()
-        self.model.add(Dense(units=128, activation='relu', input_dim=self.x.shape[1]))
-        self.model.add(Dense(units=128, activation='relu'))
-        self.model.add(Dense(units=128, activation='relu'))
-        self.model.add(Dense(units=128, activation='relu'))
-        self.model.add(Dense(units=1, activation='sigmoid'))
-
-        self.model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=0.000001),
+        model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=0.000001),
                            metrics=['accuracy'])
-        self.model.summary()
+        self.stage1_model_s = model
 
     def train(self):
+        epochs = 20
         # Create a callback that saves the model's weights
         cp_callback = [keras.callbacks.ModelCheckpoint(filepath='model.{epoch:03d}-{val_accuracy:.2f}.keras',
                                                        monitor='val_accuracy', verbose=1, save_freq='epoch'),
@@ -98,88 +77,109 @@ class Stage1ANN:  # Classification stage
                        # and mode is to stop when the quantity monitored has stopped increasing (max)
                        ]
 
-        history = self.model.fit(self.x, self.y, epochs=20, initial_epoch=0, batch_size=1, verbose=1,
+        history = self.stage1_model_s.fit(self.x, self.y, epochs=epochs, initial_epoch=0, batch_size=1, verbose=1,
                                  validation_split=0.2, callbacks=cp_callback)
-        self.model.save('model.keras')
-        accuracy = self.model.evaluate(self.x, self.y)
-        acc = history.history['accuracy']
-        val_acc = history.history['val_accuracy']
-        loss = history.history['loss']
-        val_loss = history.history['val_loss']
-        epochs_range = range(20)
-        plt.figure(figsize=(8, 8))
-        plt.subplot(1, 2, 1)
-        plt.plot(epochs_range, acc, label='Training Accuracy')
-        plt.plot(epochs_range, val_acc, label='Validation Accuracy')
-        plt.legend(loc='lower right')
-        plt.title('Training and Validation Accuracy')
-        plt.subplot(1, 2, 2)
-        plt.plot(epochs_range, loss, label='Training Loss')
-        plt.plot(epochs_range, val_loss, label='Validation Loss')
-        plt.legend(loc='upper right')
-        plt.title('Training and Validation Loss')
-        plt.show()
-
-    def convert(self):
-        converter = tf.lite.TFLiteConverter.from_saved_model('model.keras')  # path to the SavedModel directory
-        self.tflite_model = converter.convert()
-
-        # Save the model.
-        with open('model.tflite', 'wb') as f:
-            f.write(self.tflite_model)
-
+        self.stage1_model_s.save('model.keras')
+        accuracy = self.stage1_model_s.evaluate(self.x, self.y)
+        # acc = history.history['accuracy']
+        # val_acc = history.history['val_accuracy']
+        # loss = history.history['loss']
+        # val_loss = history.history['val_loss']
+        # epochs_range = range(epochs)
+        # plt.figure(figsize=(8, 8))
+        # plt.subplot(1, 2, 1)
+        # plt.plot(epochs_range, acc, label='Training Accuracy')
+        # plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+        # plt.legend(loc='lower right')
+        # plt.title('Training and Validation Accuracy')
+        # plt.subplot(1, 2, 2)
+        # plt.plot(epochs_range, loss, label='Training Loss')
+        # plt.plot(epochs_range, val_loss, label='Validation Loss')
+        # plt.legend(loc='upper right')
+        # plt.title('Training and Validation Loss')
+        # plt.show()
 
 class Stage2ANN:
     def __init__(self):
-        self.dataset_s2 = None
-        self.prediction = [0, ]
-        self.reconstructed_model = keras.models.load_model("model.keras")
+        # Less permissive class in instance attributes, this is the last, modifications must be made in stage1
+        self.y = None
+        self.stage1_model = keras.models.load_model("model.keras")
+        self.stage2_model_s = None
 
     def generate_data(self):
+        prediction = [0, ]
         result = np.empty(shape=(0, 2))
-        try:
-            for i in tqdm(np.arange(12, 14, 0.1), desc='Predicting X'):
-                for j in np.arange(24, 25, 0.1):
-                    # print(str(round(i, 2)) + ',' + str(round(j, 2)))
-                    data = np.round(np.array([[i, j]]), 3)
-                    self.prediction = self.reconstructed_model.predict(data, verbose=0)
-                    # print(self.prediction[0])
-                    if self.prediction[0] > 0.95:
-                        # print('\n', self.prediction)
-                        # print(' --------- ' + str(i) + ' ' + str(j) + ' are x - y possible coords -----------')
-                        # print(data.head())
-                        result = np.vstack((result, data))
-        except KeyboardInterrupt:
-            print("Stopping...")
-        self.dataset_s2 = pd.DataFrame(result)
-        # print(self.dataset_s2.head())
-        self.dataset_s2.to_csv('dataset_s2.csv')
+        for i in tqdm(np.arange(12, 14, 0.01), desc='Predicting'):
+            for j in np.arange(24, 25, 0.01):
+                # print(str(round(i, 2)) + ',' + str(round(j, 2)))
+                data = np.round(np.array([[i, j]]), 3)
+                prediction = self.stage1_model.predict(data, verbose=0)
+                # print(self.prediction[0])
+                if prediction[0] > 0.95:
+                    result = np.vstack((result, data))
+        return result
 
     def parallelize(self):
         pass
 
     def prepare_data(self):
-        print(self.dataset_s2.head())
+        points = self.generate_data()
+        middle_index = points.shape[0] // 2
+        target_point = points[middle_index]
+        target_array = np.full_like(points, target_point)
+        return target_array, points
 
-    def model_conf(self):
-        pass
 
-    def train_model(self):
-        pass
+    def model_conf(self, input_shape):
+        model = Sequential()
+        model.add(Dense(units=32, activation='relu', input_shape=input_shape))
+        model.add(Dense(units=64, activation='relu'))
+        model.add(Dense(units=32, activation='relu'))
+        model.add(Dense(units=2))  # Output layer for the pair of coordinates
+        model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.000001),
+                      metrics=['accuracy'], loss='binary_crossentropy')
+        self.stage2_model_s = model
+        input_shape = self.stage2_model_s.input_shape
+        print("Model input shape:", input_shape)
+
+    def train_model(self, X, y):
+        self.stage2_model_s.fit(X, y, epochs=1000, batch_size=1, verbose=1, validation_split=0.2,)
+
 
     def predict(self):
-        pass
+        predicted = self.stage2_model_s.predict(np.array([[0,0]]))
+        print(predicted)
 
+def available_gpu():  # Available nvidia gpu function
+    gpus = tf.config.list_physical_devices('GPU')
+    print("Num GPUs Available: ", len(gpus))
+    print('----------------------------------------------------------------')
+    if gpus:
+        # Optionally, print details about each GPU
+        for gpu in gpus:
+            print('----------------------------------------------------------------')
+            print(gpu)
+
+    print('----------------------------------------------------------------')
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    print('----------------------------------------------------------------')
+def stage1_main():
+    stage1 = Stage1ANN()
+    stage1.load_data()
+    stage1.prepare_data()
+    stage1.set_model()
+    stage1.train()
+def stage2_main():
+    stage2 = Stage2ANN()
+    y, X = stage2.prepare_data()
+    input_shape = X.shape[1:]
+    stage2.model_conf(input_shape)
+    print("X shape: ", X.shape, "y shape: ", y.shape)
+    stage2.train_model(X, y)
+    stage2.predict()
 
 if __name__ == "__main__":
     # Testing methods
-    # available_gpu()
-    # Dataset of possibilities
-    # stage1 = Stage1ANN()
-    # stage1.load_data()
-    # stage1.prepare_data()
-    # stage1.set_model()
-    # stage1.train()
-    # Final results
-    stage2 = Stage2ANN()
-    stage2.generate_data()
+    available_gpu()
+    # stage1_main()
+    stage2_main()
