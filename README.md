@@ -1,4 +1,4 @@
-# Spatial filtering controller by neuro-diffuse algorythm 
+# Spatial filtering controller by neuro-diffuse algorythm (DEPRECATED)
 This repo contains the code for a controller with the capability to align a spatial filter in X-Y-Z plane using neural 
 networks and diffuse control.
 
